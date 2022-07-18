@@ -1,6 +1,6 @@
 from os import listdir
 from os.path import isfile, join
-import json, subprocess, tempfile, os, time
+import json, subprocess, tempfile, os, time, uuid
 
 files = [f for f in listdir("./themes") if isfile(join("./themes", f)) and f.endswith(".json")]
 
@@ -11,6 +11,7 @@ class RepoReference:
         self.repoCommit = json["repo_commit"] if "repo_commit" in json else None
         self.previewImage = json["preview_image"] if "preview_image" in json else None
         self.repo = None
+        self.id = str(uuid.uuid4())
 
     def verify(self):
         if self.repoUrl is None:
@@ -24,6 +25,7 @@ class RepoReference:
     
     def toDict(self):
         return {
+            "id": self.id,
             "repo_url": self.repoUrl,
             "repo_subpath": self.repoSubpath,
             "repo_commit": self.repoCommit,
