@@ -54,20 +54,14 @@ class Repo:
             tempDir.name
         ], check=True)
 
-        os.chdir(tempDir.name)
-
-        try:
-            subprocess.run([
-                "git",
-                "reset",
-                "--hard",
-                self.repoReference.repoCommit
-            ], check=True)
-        except Exception as e:
-            os.chdir(cwd)
-            raise e
-
-        os.chdir(cwd)
+        subprocess.run([
+            "git",
+            "-C",
+            tempDir.name,
+            "reset",
+            "--hard",
+            self.repoReference.repoCommit
+        ], check=True)
 
         self.themePath = join(tempDir.name, self.repoReference.repoSubpath)
         themeDataPath = join(self.themePath, "theme.json")
@@ -122,11 +116,9 @@ class Repo:
 
     
 
-cwd = os.getcwd()
 themes = []
 
 for x in files:
-    os.chdir(cwd)
     path = join("./themes", x)
     with open(path, "r") as fp:
         data = json.load(fp)
