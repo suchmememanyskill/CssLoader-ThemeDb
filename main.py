@@ -22,6 +22,9 @@ class RepoReference:
         
         if self.previewImage is None:
             raise Exception("No preview image was specified")
+
+        if not self.previewImage.startswith("https://raw.githubusercontent.com/suchmememanyskill/CssLoader-ThemeDb"):
+            raise Exception("Image is not located on this repo!")
     
     def toDict(self):
         return {
