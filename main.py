@@ -101,12 +101,19 @@ class Repo:
         
         if self.author is None:
             raise Exception("Theme has no author")
+
+        expectedFiles = [join(self.themePath, "theme.json")]
         
         if "inject" in self.json:
             for x in self.json["inject"]:
                 if not os.path.exists(join(self.themePath, x)):
                     raise Exception("Inject contains css that does not exist")
+
+                if not x.endswith(".css"):
+                    raise Exception(f"Inject contains a non-css file '{x}'!")
+                
                 print(f"{x} exists in theme")
+                expectedFiles.append(join(self.themePath, x))
         
         if "patches" in self.json:
             for x in self.json["patches"]:
@@ -119,7 +126,42 @@ class Repo:
                         for z in patch[y]:
                             if not os.path.exists(join(self.themePath, z)):
                                 raise Exception(f"Patch {x} contains css that does not exist")
+
+                            if not z.endswith(".css"):
+                                raise Exception(f"Path {x} contains a non-css file '{z}'!")
+
                             print(f"{z} exists in theme")
+                            expectedFiles.append(join(self.themePath, z))
+        
+        actualFiles = []
+
+        for root, dirs, files in os.walk(self.themePath):
+            for f in files:
+                actualFiles.append(join(root, f))
+
+        if (os.name == "nt"):
+            expectedFiles = [x.replace("/", "\\") for x in expectedFiles]
+        
+        print(expectedFiles)
+        print(actualFiles)
+
+        if (len(actualFiles) != len(expectedFiles)):
+            raise Exception("Theme folder contains an unexpected amount of files!")
+
+        for x in actualFiles:
+            if x not in expectedFiles:
+                raise Exception(f"Theme folder contains file '{x}' that is not referenced in a theme!")
+
+        totalSize = 0
+        for x in expectedFiles:
+            size = os.path.getsize(x)
+            totalSize += size
+            print(f"{x} is {size} bytes")
+
+        print(f"Total theme size is {totalSize} bytes")
+
+        if (totalSize > 0x100000): # 1 MB max per theme
+            raise Exception("Total theme size exceeds 1MB")
 
     
 
