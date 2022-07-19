@@ -26,8 +26,16 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
       
-      - name: Build themes.json
-        run: python3 main.py
+      - name: Install requirements
+        run: pip install -r requirements.txt
+
+      - shell: bash
+        env:
+          SECRET_APPLICATIONKEY: ${{ secrets.SECRET_APPLICATIONKEY }}
+          SECRET_ENDPOINT: ${{ secrets.SECRET_ENDPOINT }}
+          SECRET_KEYID: ${{ secrets.SECRET_KEYID }}
+        name: Build themes.json
+        run: python3 main.py upload
 
       - name: Upload themes.json
         uses: WebFreak001/deploy-nightly@v1.1.0

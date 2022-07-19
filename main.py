@@ -1,8 +1,66 @@
 from os import listdir
 from os.path import isfile, join
-import json, subprocess, tempfile, os, time, uuid
+import json, subprocess, tempfile, os, time, uuid, boto3, binascii, hashlib, sys, shutil, zipfile
+from botocore.config import Config
 
 files = [f for f in listdir("./themes") if isfile(join("./themes", f)) and f.endswith(".json")]
+
+UPLOAD_FILES = len(sys.argv) > 1 and sys.argv[1] == "upload"
+
+# Stolen from https://github.com/backblaze-b2-samples/b2-python-s3-sample/blob/main/sample.py
+class B2Bucket():
+    def __init__(self, b2Connection, bucket):
+        self.resource = b2Connection
+        self.bucket = bucket
+        self.loadFiles()
+        pass
+
+    def loadFiles(self):
+        self.files = [x for x in self.bucket.objects.all()]
+    
+    def fileExists(self, fileName : str) -> bool:
+        for x in self.files:
+            if x.key == fileName:
+                return True
+        return False
+
+    def getFileUrl(self, fileName : str) -> str:
+        for x in self.files:
+            if x.key == fileName:
+                return f"{self.resource.ENDPOINT}/{x.bucket_name}/{x.key}"
+
+        return None
+    
+    def upload(self, path : str):
+        filename = os.path.basename(path)
+        self.bucket.upload_file(path, filename)
+
+class B2Connection():
+    def __init__(self):
+        self.ENDPOINT = os.getenv("SECRET_ENDPOINT")
+        self.KEYID = os.getenv("SECRET_KEYID")
+        self.APPLICATIONKEY = os.getenv("SECRET_APPLICATIONKEY")
+
+        self.resource = boto3.resource(service_name='s3',
+                        endpoint_url=self.ENDPOINT,                # Backblaze endpoint
+                        aws_access_key_id=self.KEYID,              # Backblaze keyID
+                        aws_secret_access_key=self.APPLICATIONKEY, # Backblaze applicationKey
+                        config = Config(
+                            signature_version='s3v4',
+                        ))
+    
+    def getBucket(self, bucketName : str) -> B2Bucket:
+        bucket = self.resource.Bucket(bucketName)
+        return B2Bucket(self, bucket)
+
+
+b2Connection = None
+b2ThemeBucket = None
+
+if (UPLOAD_FILES):
+    print("Connecting to backblaze...")
+    b2Connection = B2Connection()
+    b2ThemeBucket = b2Connection.getBucket("deck-themes")
 
 class RepoReference:
     def __init__(self, json : dict):
@@ -11,6 +69,7 @@ class RepoReference:
         self.repoCommit = json["repo_commit"] if "repo_commit" in json else None
         self.previewImage = ""
         self.previewImagePath = json["preview_image_path"] if "preview_image_path" in json else None
+        self.downloadUrl = ""
         self.repo = None
         self.id = str(uuid.uuid4())
 
@@ -32,9 +91,7 @@ class RepoReference:
     def toDict(self):
         return {
             "id": self.id,
-            "repo_url": self.repoUrl,
-            "repo_subpath": self.repoSubpath,
-            "repo_commit": self.repoCommit,
+            "download_url": self.downloadUrl,
             "preview_image": self.previewImage,
             "name": self.repo.name,
             "version": self.repo.version,
@@ -83,9 +140,31 @@ class Repo:
         self.read(data)
         self.verify()
 
+        if (UPLOAD_FILES):
+            self.upload()
+
         print("Cleaning up temp dir...")
         tempDir.cleanup()
     
+    def upload(self):
+        self.hex = binascii.hexlify(hashlib.sha256(f"{self.repoReference.repoUrl}.{self.repoReference.repoSubpath}.{self.repoReference.repoCommit}".encode("utf-8")).digest()).decode("ascii")
+        self.repoReference.id = self.hex
+
+        if (b2ThemeBucket.fileExists(f"{self.hex}.zip")):
+            self.repoReference.downloadUrl = b2ThemeBucket.getFileUrl(f"{self.hex}.zip")
+            return
+
+        tempDir = tempfile.TemporaryDirectory()
+        print(f"Generating zip...")
+        shutil.copytree(self.themePath, join(tempDir.name, self.name))
+        shutil.make_archive(self.hex, "zip", tempDir.name, ".")
+        print("Uploading zip...")
+        b2ThemeBucket.upload(f"{self.hex}.zip")
+        b2ThemeBucket.loadFiles()
+        self.repoReference.downloadUrl = b2ThemeBucket.getFileUrl(f"{self.hex}.zip")
+        tempDir.cleanup()
+
+
     def read(self, json : dict):
         self.json = json
         self.name = json["name"] if "name" in json else None
