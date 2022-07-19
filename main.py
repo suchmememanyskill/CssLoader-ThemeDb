@@ -40,9 +40,6 @@ class B2Connection():
         self.ENDPOINT = os.getenv("SECRET_ENDPOINT")
         self.KEYID = os.getenv("SECRET_KEYID")
         self.APPLICATIONKEY = os.getenv("SECRET_APPLICATIONKEY")
-        print("wagu")
-        print(self.ENDPOINT)
-
         self.resource = boto3.resource(service_name='s3',
                         endpoint_url=self.ENDPOINT,                # Backblaze endpoint
                         aws_access_key_id=self.KEYID,              # Backblaze keyID
