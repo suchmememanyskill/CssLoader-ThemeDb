@@ -9,7 +9,8 @@ class RepoReference:
         self.repoUrl = json["repo_url"] if "repo_url" in json else None
         self.repoSubpath = json["repo_subpath"] if "repo_subpath" in json else "."
         self.repoCommit = json["repo_commit"] if "repo_commit" in json else None
-        self.previewImage = json["preview_image"] if "preview_image" in json else None
+        self.previewImage = ""
+        self.previewImagePath = json["preview_image_path"] if "preview_image_path" in json else None
         self.repo = None
         self.id = str(uuid.uuid4())
 
@@ -20,11 +21,13 @@ class RepoReference:
         if self.repoCommit is None:
             raise Exception("No commit was specified")
         
-        if self.previewImage is None:
+        if self.previewImagePath is None:
             raise Exception("No preview image was specified")
 
-        if not self.previewImage.startswith("https://raw.githubusercontent.com/suchmememanyskill/CssLoader-ThemeDb"):
-            raise Exception("Image is not located on this repo!")
+        if not os.path.exists(self.previewImagePath):
+            raise Exception("Image does not exist in repo")
+        
+        self.previewImage = f"https://raw.githubusercontent.com/suchmememanyskill/CssLoader-ThemeDb/main/{self.previewImagePath}"
     
     def toDict(self):
         return {
@@ -46,6 +49,7 @@ class Repo:
         self.version = None
         self.author = None
         self.themePath = None
+        self.repoPath = None
     
     def get(self):
         tempDir = tempfile.TemporaryDirectory()
@@ -123,6 +127,7 @@ themes = []
 
 for x in files:
     path = join("./themes", x)
+    print(f"Processing {path}...")
     with open(path, "r") as fp:
         data = json.load(fp)
 
