@@ -1,7 +1,6 @@
 from os import listdir
 from os.path import isfile, join
 import json, subprocess, tempfile, os, time, uuid, boto3, binascii, hashlib, sys, shutil, requests
-from weakref import ref
 from botocore.config import Config
 
 files = [f for f in listdir("./themes") if isfile(join("./themes", f)) and f.endswith(".json")]
