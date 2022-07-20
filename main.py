@@ -90,11 +90,7 @@ class RepoReference:
         self.megaJsonEntry = None
 
         result = subprocess.run(["git", "log", "-1", "--pretty=%ci", path], capture_output=True)
-        print(result)
-
         dateText = result.stdout.decode("utf-8").strip()
-        print(dateText)
-        
         parsedDate = parse(dateText)
         self.lastChanged = parsedDate.isoformat()
 
