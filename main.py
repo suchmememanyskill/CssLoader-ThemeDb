@@ -88,8 +88,13 @@ class RepoReference:
         self.repo = None
         self.id = binascii.hexlify(hashlib.sha256(f"{self.repoUrl}.{self.repoSubpath}.{self.repoCommit}".encode("utf-8")).digest()).decode("ascii")
         self.megaJsonEntry = None
-        command = f"{'git' if os.name == 'nt' else '/usr/bin/git'} log -1 --pretty=\"format:%ci\" \"{path}\""
-        result = subprocess.run(command, capture_output=True)
+        
+        if os.name == 'nt':
+            command = f"git log -1 --pretty=\"format:%ci\" \"{path}\""
+            result = subprocess.run(command, capture_output=True)
+        else:
+            result = subprocess.run(["git", "log", "-1", "--pretty=\"format:%ci\"", path], capture_output=True)
+
         dateText = result.stdout.decode("utf-8")
         parsedDate = parse(dateText)
         self.lastChanged = parsedDate.isoformat()
