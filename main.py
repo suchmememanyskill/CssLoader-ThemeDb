@@ -88,7 +88,7 @@ class RepoReference:
         self.repo = None
         self.id = binascii.hexlify(hashlib.sha256(f"{self.repoUrl}.{self.repoSubpath}.{self.repoCommit}".encode("utf-8")).digest()).decode("ascii")
         self.megaJsonEntry = None
-        command = f"git log -1 --pretty=\"format:%ci\" \"{path}\""
+        command = f"{'git' if os.name == 'nt' else '/usr/bin/git'} log -1 --pretty=\"format:%ci\" \"{path}\""
         result = subprocess.run(command, capture_output=True)
         dateText = result.stdout.decode("utf-8")
         parsedDate = parse(dateText)
@@ -296,7 +296,7 @@ class Repo:
 themes = []
 
 for x in files:
-    path = join("themes", x)
+    path = join("./themes", x)
     print(f"Processing {path}...")
     with open(path, "r") as fp:
         data = json.load(fp)
