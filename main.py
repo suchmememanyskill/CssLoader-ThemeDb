@@ -296,7 +296,7 @@ class Repo:
 themes = []
 
 for x in files:
-    path = join("./themes", x)
+    path = join("themes", x)
     print(f"Processing {path}...")
     with open(path, "r") as fp:
         data = json.load(fp)
