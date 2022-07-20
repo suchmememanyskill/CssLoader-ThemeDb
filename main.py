@@ -89,6 +89,7 @@ class RepoReference:
         self.id = binascii.hexlify(hashlib.sha256(f"{self.repoUrl}.{self.repoSubpath}.{self.repoCommit}".encode("utf-8")).digest()).decode("ascii")
         self.megaJsonEntry = None
 
+        # These are all lovely patches to get git CI to shut up
         if os.name == 'nt':
             command = f"git log -1 --pretty=\"format:%ci\" \"{path}\""
             result = subprocess.run(command, capture_output=True)
@@ -96,8 +97,13 @@ class RepoReference:
             result = subprocess.run(["git", "log", "-1", "--pretty=\"format:%ci\"", path], capture_output=True)
 
         dateText = result.stdout.decode("utf-8")
-        print(f"test '{dateText}'")
+
+        if (dateText.startswith('"')):
+            dateText = dateText[1:]
         
+        if (dateText.endswith('"')):
+            dateText = dateText[:-1]
+
         if (dateText.startswith("format:")):
             dateText = dateText[7:]
 
