@@ -96,7 +96,7 @@ class RepoReference:
         else:
             result = subprocess.run(["git", "log", "-1", "--pretty=\"format:%ci\"", path], capture_output=True)
 
-        dateText = result.stdout.decode("utf-8")
+        dateText = result.stdout.decode("utf-8").strip()
 
         if (dateText.startswith('"')):
             dateText = dateText[1:]
