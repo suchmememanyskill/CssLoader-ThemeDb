@@ -1,6 +1,7 @@
 from os import listdir
 from os.path import isfile, join
-import json, subprocess, tempfile, os, time, uuid, boto3, binascii, hashlib, sys, shutil, zipfile
+import json, subprocess, tempfile, os, time, uuid, boto3, binascii, hashlib, sys, shutil, requests
+from weakref import ref
 from botocore.config import Config
 
 files = [f for f in listdir("./themes") if isfile(join("./themes", f)) and f.endswith(".json")]
@@ -61,6 +62,17 @@ if (UPLOAD_FILES):
     b2Connection = B2Connection()
     b2ThemeBucket = b2Connection.getBucket("deck-themes")
 
+
+print("Getting megajson...")
+megaJson = requests.get("https://github.com/suchmememanyskill/CssLoader-ThemeDb/releases/download/1.0.0/themes.json").json()
+
+def getMegaJsonEntry(themeId : str) -> dict:
+    for x in megaJson:
+        if (themeId == x["id"]):
+            return x
+    return None
+
+
 class RepoReference:
     def __init__(self, json : dict):
         self.repoUrl = json["repo_url"] if "repo_url" in json else None
@@ -70,7 +82,8 @@ class RepoReference:
         self.previewImagePath = json["preview_image_path"] if "preview_image_path" in json else None
         self.downloadUrl = ""
         self.repo = None
-        self.id = str(uuid.uuid4())
+        self.id = binascii.hexlify(hashlib.sha256(f"{self.repoUrl}.{self.repoSubpath}.{self.repoCommit}".encode("utf-8")).digest()).decode("ascii")
+        self.megaJsonEntry = None
 
     def verify(self):
         if self.repoUrl is None:
@@ -87,7 +100,14 @@ class RepoReference:
         
         self.previewImage = f"https://raw.githubusercontent.com/suchmememanyskill/CssLoader-ThemeDb/main/{self.previewImagePath}"
     
+    def existsInMegaJson(self) -> bool:
+        self.megaJsonEntry = getMegaJsonEntry(self.id)
+        return self.megaJsonEntry != None
+
     def toDict(self):
+        if self.megaJsonEntry != None:
+            return self.megaJsonEntry
+
         return {
             "id": self.id,
             "download_url": self.downloadUrl,
@@ -146,8 +166,7 @@ class Repo:
         tempDir.cleanup()
     
     def upload(self):
-        self.hex = binascii.hexlify(hashlib.sha256(f"{self.repoReference.repoUrl}.{self.repoReference.repoSubpath}.{self.repoReference.repoCommit}".encode("utf-8")).digest()).decode("ascii")
-        self.repoReference.id = self.hex
+        self.hex = self.repoReference.id
 
         if (b2ThemeBucket.fileExists(f"{self.hex}.zip")):
             self.repoReference.downloadUrl = b2ThemeBucket.getFileUrl(f"{self.hex}.zip")
@@ -253,6 +272,11 @@ for x in files:
 
     reference = RepoReference(data)
     reference.verify()
+
+    if (reference.existsInMegaJson()):
+        print(f"Skipping {path} as it's up to date")
+        themes.append(reference.toDict())
+        continue
 
     repo = Repo(reference)
     repo.get()
