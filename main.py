@@ -2,6 +2,7 @@ from os import listdir
 from os.path import isfile, join
 import json, subprocess, tempfile, os, time, uuid, boto3, binascii, hashlib, sys, shutil, requests
 from botocore.config import Config
+from dateutil.parser import parse
 
 files = [f for f in listdir("./themes") if isfile(join("./themes", f)) and f.endswith(".json")]
 
@@ -76,7 +77,8 @@ print("Getting megajson...")
 megaJson = MegaJson()
 
 class RepoReference:
-    def __init__(self, json : dict):
+    def __init__(self, json : dict, path : str):
+        self.path = path
         self.repoUrl = json["repo_url"] if "repo_url" in json else None
         self.repoSubpath = json["repo_subpath"] if "repo_subpath" in json else "."
         self.repoCommit = json["repo_commit"] if "repo_commit" in json else None
@@ -86,6 +88,11 @@ class RepoReference:
         self.repo = None
         self.id = binascii.hexlify(hashlib.sha256(f"{self.repoUrl}.{self.repoSubpath}.{self.repoCommit}".encode("utf-8")).digest()).decode("ascii")
         self.megaJsonEntry = None
+        command = f"git log -1 --pretty=\"format:%ci\" \"{path}\""
+        result = subprocess.run(command, capture_output=True)
+        dateText = result.stdout.decode("utf-8")
+        parsedDate = parse(dateText)
+        self.lastChanged = parsedDate.isoformat()
 
     def verify(self):
         if self.repoUrl is None:
@@ -107,16 +114,38 @@ class RepoReference:
         return self.megaJsonEntry != None
 
     def toDict(self):
+        themeId = self.id
+        downloadUrl = self.downloadUrl
+        previewImage = self.previewImage
+        name = None
+        version = None
+        author = None
+        lastChanged = self.lastChanged
+
+        if self.repo != None:
+            name = self.repo.name
+            version = self.repo.version
+            author = self.repo.author
+
         if self.megaJsonEntry != None:
-            return self.megaJsonEntry
+            def possiblyReturnMegaJsonStuff(attribute : str, original):
+                return self.megaJsonEntry[attribute] if attribute in self.megaJsonEntry else original
+
+            themeId = possiblyReturnMegaJsonStuff("id", themeId)
+            downloadUrl = possiblyReturnMegaJsonStuff("download_url", downloadUrl)
+            previewImage = possiblyReturnMegaJsonStuff("preview_image", previewImage)
+            name = possiblyReturnMegaJsonStuff("name", name)
+            version = possiblyReturnMegaJsonStuff("version", version)
+            author = possiblyReturnMegaJsonStuff("author", author)
         
         return {
-            "id": self.id,
-            "download_url": self.downloadUrl,
-            "preview_image": self.previewImage,
-            "name": self.repo.name,
-            "version": self.repo.version,
-            "author": self.repo.author
+            "id": themeId,
+            "download_url": downloadUrl,
+            "preview_image": previewImage,
+            "name": name,
+            "version": version,
+            "author": author,
+            "lastChanged": lastChanged,
         }
     
 class Repo:
@@ -272,7 +301,7 @@ for x in files:
     with open(path, "r") as fp:
         data = json.load(fp)
 
-    reference = RepoReference(data)
+    reference = RepoReference(data, path)
     reference.verify()
 
     if (reference.existsInMegaJson()):
@@ -289,6 +318,13 @@ print("Verifying there are no identical themes")
 for x in themes:
     if len([y for y in themes if y["name"] == x["name"]]) > 1:
         raise Exception(f"Multiple themes with the same name detected in the repository! Name is '{x['name']}'")
+
+print("Sorting db...")
+
+def getName(elem):
+    return elem["name"]
+
+themes.sort(key=getName)
 
 print("Done! Dumping result")
 with open("themes.json", 'w') as fp:
