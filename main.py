@@ -61,16 +61,19 @@ if (UPLOAD_FILES):
     b2Connection = B2Connection()
     b2ThemeBucket = b2Connection.getBucket("deck-themes")
 
+class MegaJson():
+    def __init__(self):
+        self.megaJson = requests.get("https://github.com/suchmememanyskill/CssLoader-ThemeDb/releases/download/1.0.0/themes.json").json()
+
+    def getMegaJsonEntry(self, themeId : str) -> dict:
+        for x in self.megaJson:
+            if (themeId == x["id"]):
+                return x
+        return None
+
 
 print("Getting megajson...")
-megaJson = requests.get("https://github.com/suchmememanyskill/CssLoader-ThemeDb/releases/download/1.0.0/themes.json").json()
-
-def getMegaJsonEntry(themeId : str) -> dict:
-    for x in megaJson:
-        if (themeId == x["id"]):
-            return x
-    return None
-
+megaJson = MegaJson()
 
 class RepoReference:
     def __init__(self, json : dict):
@@ -100,13 +103,13 @@ class RepoReference:
         self.previewImage = f"https://raw.githubusercontent.com/suchmememanyskill/CssLoader-ThemeDb/main/{self.previewImagePath}"
     
     def existsInMegaJson(self) -> bool:
-        self.megaJsonEntry = getMegaJsonEntry(self.id)
+        self.megaJsonEntry = megaJson.getMegaJsonEntry(self.id)
         return self.megaJsonEntry != None
 
     def toDict(self):
         if self.megaJsonEntry != None:
             return self.megaJsonEntry
-
+        
         return {
             "id": self.id,
             "download_url": self.downloadUrl,
@@ -281,6 +284,11 @@ for x in files:
     repo.get()
     reference.repo = repo
     themes.append(reference.toDict())
+
+print("Verifying there are no identical themes")
+for x in themes:
+    if len([y for y in themes if y["name"] == x["name"]]) > 1:
+        raise Exception(f"Multiple themes with the same name detected in the repository! Name is '{x['name']}'")
 
 print("Done! Dumping result")
 with open("themes.json", 'w') as fp:
