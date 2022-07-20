@@ -93,7 +93,7 @@ class RepoReference:
         dateText = result.stdout.decode("utf-8").strip()
         parsedDate = parse(dateText)
         self.lastChanged = parsedDate.isoformat()
-
+ 
     def verify(self):
         if self.repoUrl is None:
             raise Exception("No repo url was specified")
