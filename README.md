@@ -106,15 +106,27 @@ A complex theme is a simple theme with patches. Patches are displayed as dropdow
 
 # Submitting a theme to the theme store
 
-To submit a theme, fork this repository. Make a .json file called `{author}-{themename}.json`, and put it in the themes folder. You also need to provide a preview image. This preview image should go in the images folder. Preferably upload images in a .jpg format. The format for a remote .json is stated below
+1. Fork this repository
+2. Clone the forked repository to your pc using your favorite git tool
+3. Create a preview image and place it in the images folder. Preferably make a subfolder with your username
+    - Preferably upload an image in the .jpg format
+4. Create a json called `{author}-{themename}.json` in the themes folder, with the following content: (See an example/template below)
+    - `repo_url`: Required, points to another github repository with the theme
+    - `repo_subpath`: Optional, defaults to '.', indicates the subpath to the folder containing the theme
+    - `repo_commit`: Required, the commit in the git repo you want to release
+    - `preview_image_path`: Required. This image is displayed in the browse themes UI of the plugin. The image needs to be located in this repository
+5. (Optional) Test your theme submission using the python script, using `py main.py` in the repository folder.
+    - Python and git cli needs to be installed
+    - If you are missing python libraries, type `pip install -r requirements.txt`
+    - If the script throws no exception, you're good
+6. Make a commit with the image and .json files. Feel free to put multiple themes in 1 commit
+7. Create a pull request back to this repository 
 
 ```json
 {
-    "repo_url": "https://github.com/suchmememanyskill/wagu", # Required, points to another github repository with the theme
-    "repo_subpath": "MoreLibraryIcons", # Optional, defaults to '.', indicates the subpath to the folder containing the theme
-    "repo_commit": "e04fdaf", # Required, the commit in the git repo you want to release
-    "preview_image_path": "images/Clean Gameview.jpg" # Required. This image is displayed in the browse themes UI of the plugin. The image needs to be located in this repository
+    "repo_url": "https://github.com/suchmememanyskill/Steam-Deck-Themes",
+    "repo_subpath": "Clean Gameview",
+    "repo_commit": "d9f160",
+    "preview_image_path": "images/SuchMeme/Clean Gameview.jpg"
 }
 ```
-
-After creating the necessary files, create a pull request to this repository
