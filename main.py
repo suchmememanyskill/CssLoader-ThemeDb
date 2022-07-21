@@ -108,8 +108,12 @@ class RepoReference:
 
         result = subprocess.run(["git", "log", "-1", "--pretty=%ci", path], capture_output=True)
         dateText = result.stdout.decode("utf-8").strip()
-        parsedDate = parse(dateText)
-        self.lastChanged = parsedDate.isoformat()
+        if (dateText == ""):
+            # Assume the theme is new. This will get fixed when it's actually committed
+            self.lastChanged = ""
+        else:
+            parsedDate = parse(dateText)
+            self.lastChanged = parsedDate.isoformat()
 
         self.override()
 
