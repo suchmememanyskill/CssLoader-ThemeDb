@@ -26,7 +26,7 @@ The debugger allows you to access the multiple tabs that are used for the UI. A 
     - After selecting a tab, you should be able to see the html and css used for that specific tab, like the screenshot above
 
 ## Making a theme compatible with the Css Loader
-Themes are folders with css files and a single `theme.json` inside. The theme.json determines how everything will be displayed, and any dropdown options if the theme has them
+Themes are folders with css files and a single `theme.json` inside. The theme.json determines how everything will be displayed, and any dropdown options if the theme has them. The Css Loader loads themes from `/home/deck/homebrew/themes`
 
 ### Simple themes
 ![SimpleTheme](images/Readme/simpletheme.png)
