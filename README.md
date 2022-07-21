@@ -37,6 +37,7 @@ For a simple theme, like the image above, the theme json should look something l
 {
     "name": "Clean Gameview",
     "author": "SuchMeme",
+    "target": "Library",
     "inject": {
         "shared.css": ["SP"]
     }
@@ -47,6 +48,19 @@ For a simple theme, like the image above, the theme json should look something l
 - The author element describes the theme author.
 - An optional field `"version": "v1.0"` can be added. If no version field is found, the version defaults to `v1.0`
 - The inject tab is a dictionary of relative css file paths as keys, and a list of tabs you want the css to be injected into
+- The target field describes what part of the UI your theme themes. This is only useful for submitting a theme. The following options are available: (Note: if you want an option to be added, open an issue on this repository)
+    - System-Wide
+    - Keyboard
+    - Home
+    - Library
+    - Store
+    - Friends and Chat
+    - Media
+    - Downloads
+    - Settings
+    - Lock Screen
+    - Other
+
 
 ### Complex themes
 ![ComplexTheme](images/Readme/complextheme.png)
@@ -58,6 +72,7 @@ A complex theme is a simple theme with patches. Patches are displayed as dropdow
     "name": "Colored Toggles",
     "version": "v1.2",
     "author": "SuchMeme",
+    "target": "System-Wide",
     "inject": {
         "shared.css": [
             "QuickAccess", "SP", "MainMenu"

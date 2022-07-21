@@ -9,6 +9,20 @@ files = [f for f in listdir("./themes") if isfile(join("./themes", f)) and f.end
 UPLOAD_FILES = "upload" in sys.argv
 FORCE_REFRESH = "force" in sys.argv
 
+VALID_TARGETS = [
+    "System-Wide",
+    "Keyboard",
+    "Home",
+    "Library",
+    "Store",
+    "Friends and Chat",
+    "Media",
+    "Downloads",
+    "Settings",
+    "Lock Screen",
+    "Other",
+]
+
 # Stolen from https://github.com/backblaze-b2-samples/b2-python-s3-sample/blob/main/sample.py
 class B2Bucket():
     def __init__(self, b2Connection, bucket):
@@ -83,17 +97,24 @@ class RepoReference:
         self.repoUrl = json["repo_url"] if "repo_url" in json else None
         self.repoSubpath = json["repo_subpath"] if "repo_subpath" in json else "."
         self.repoCommit = json["repo_commit"] if "repo_commit" in json else None
+        self.overrides = json["overrides"] if "overrides" in json else {}
         self.previewImage = ""
         self.previewImagePath = json["preview_image_path"] if "preview_image_path" in json else None
         self.downloadUrl = ""
         self.repo = None
         self.id = binascii.hexlify(hashlib.sha256(f"{self.repoUrl}.{self.repoSubpath}.{self.repoCommit}".encode("utf-8")).digest()).decode("ascii")
         self.megaJsonEntry = None
+        self.target = None
 
         result = subprocess.run(["git", "log", "-1", "--pretty=%ci", path], capture_output=True)
         dateText = result.stdout.decode("utf-8").strip()
         parsedDate = parse(dateText)
         self.lastChanged = parsedDate.isoformat()
+
+        self.override()
+
+    def override(self):
+        self.target = self.overrides["target"] if "target" in self.overrides else self.target
 
     def verify(self):
         if self.repoUrl is None:
@@ -122,11 +143,13 @@ class RepoReference:
         version = None
         author = None
         lastChanged = self.lastChanged
+        target = self.target
 
         if self.repo != None:
             name = self.repo.name
             version = self.repo.version
             author = self.repo.author
+            target = self.repo.target
 
         if self.megaJsonEntry != None:
             def possiblyReturnMegaJsonStuff(attribute : str, original):
@@ -138,6 +161,7 @@ class RepoReference:
             name = possiblyReturnMegaJsonStuff("name", name)
             version = possiblyReturnMegaJsonStuff("version", version)
             author = possiblyReturnMegaJsonStuff("author", author)
+            target = possiblyReturnMegaJsonStuff("target", target)
         
         return {
             "id": themeId,
@@ -147,6 +171,7 @@ class RepoReference:
             "version": version,
             "author": author,
             "last_changed": lastChanged,
+            "target": target,
         }
     
 class Repo:
@@ -156,6 +181,7 @@ class Repo:
         self.name = None
         self.version = None
         self.author = None
+        self.target = repoReference.target
         self.themePath = None
         self.repoPath = None
     
@@ -220,6 +246,7 @@ class Repo:
         self.name = json["name"] if "name" in json else None
         self.version = json["version"] if "version" in json else "v1.0"
         self.author = json["author"] if "author" in json else None # This isn't required by the css loader but should be for the theme store 
+        self.target = json["target"] if "target" in json else self.target # This isn't used by the css loader but used for sorting instead
 
     def verify(self):
         if self.json is None:
@@ -230,6 +257,12 @@ class Repo:
         
         if self.author is None:
             raise Exception("Theme has no author")
+        
+        if (self.target is None):
+            raise Exception("Theme has no target!")
+
+        if (self.target not in VALID_TARGETS):
+            raise Exception(f"'{self.target}' is not a valid target!")
 
         expectedFiles = [join(self.themePath, "theme.json")]
         

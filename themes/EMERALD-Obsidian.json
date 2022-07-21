@@ -2,5 +2,8 @@
   "repo_url": "https://github.com/EMERALD0874/Steam-Deck-Themes",
   "repo_subpath": "Obsidian",
   "repo_commit": "0b28575",
-  "preview_image_path": "images/EMERALD/Obsidian.jpg"
+  "preview_image_path": "images/EMERALD/Obsidian.jpg",
+  "overrides": {
+    "target": "System-Wide"
+  }
 }
