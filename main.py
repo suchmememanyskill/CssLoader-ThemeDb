@@ -145,7 +145,7 @@ class RepoReference:
             "name": name,
             "version": version,
             "author": author,
-            "lastChanged": lastChanged,
+            "last_changed": lastChanged,
         }
     
 class Repo:
