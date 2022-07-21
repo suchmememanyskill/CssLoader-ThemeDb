@@ -1,16 +1,9 @@
 # This is a basic workflow to help you get started with Actions
 
-name: push CI
+name: force CI
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
-
-  schedule:
-    - cron: "0 0 * * *"
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -37,7 +30,7 @@ jobs:
           SECRET_ENDPOINT: ${{ secrets.SECRET_ENDPOINT }}
           SECRET_KEYID: ${{ secrets.SECRET_KEYID }}
         name: Build themes.json
-        run: python3 main.py upload
+        run: python3 main.py upload force
 
       - name: Upload themes.json
         uses: WebFreak001/deploy-nightly@v1.1.0

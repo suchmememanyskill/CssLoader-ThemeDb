@@ -1,11 +1,27 @@
 from os import listdir
 from os.path import isfile, join
-import json, subprocess, tempfile, os, time, uuid, boto3, binascii, hashlib, sys, shutil, zipfile
+import json, subprocess, tempfile, os, time, uuid, boto3, binascii, hashlib, sys, shutil, requests
 from botocore.config import Config
+from dateutil.parser import parse
 
 files = [f for f in listdir("./themes") if isfile(join("./themes", f)) and f.endswith(".json")]
 
-UPLOAD_FILES = len(sys.argv) > 1 and sys.argv[1] == "upload"
+UPLOAD_FILES = "upload" in sys.argv
+FORCE_REFRESH = "force" in sys.argv
+
+VALID_TARGETS = [
+    "System-Wide",
+    "Keyboard",
+    "Home",
+    "Library",
+    "Store",
+    "Friends and Chat",
+    "Media",
+    "Downloads",
+    "Settings",
+    "Lock Screen",
+    "Other",
+]
 
 # Stolen from https://github.com/backblaze-b2-samples/b2-python-s3-sample/blob/main/sample.py
 class B2Bucket():
@@ -61,16 +77,44 @@ if (UPLOAD_FILES):
     b2Connection = B2Connection()
     b2ThemeBucket = b2Connection.getBucket("deck-themes")
 
+class MegaJson():
+    def __init__(self):
+        self.megaJson = requests.get("https://github.com/suchmememanyskill/CssLoader-ThemeDb/releases/download/1.0.0/themes.json").json()
+
+    def getMegaJsonEntry(self, themeId : str) -> dict:
+        for x in self.megaJson:
+            if (themeId == x["id"]):
+                return x
+        return None
+
+
+print("Getting megajson...")
+megaJson = MegaJson()
+
 class RepoReference:
-    def __init__(self, json : dict):
+    def __init__(self, json : dict, path : str):
+        self.path = path
         self.repoUrl = json["repo_url"] if "repo_url" in json else None
         self.repoSubpath = json["repo_subpath"] if "repo_subpath" in json else "."
         self.repoCommit = json["repo_commit"] if "repo_commit" in json else None
+        self.overrides = json["overrides"] if "overrides" in json else {}
         self.previewImage = ""
         self.previewImagePath = json["preview_image_path"] if "preview_image_path" in json else None
         self.downloadUrl = ""
         self.repo = None
-        self.id = str(uuid.uuid4())
+        self.id = binascii.hexlify(hashlib.sha256(f"{self.repoUrl}.{self.repoSubpath}.{self.repoCommit}".encode("utf-8")).digest()).decode("ascii")
+        self.megaJsonEntry = None
+        self.target = None
+
+        result = subprocess.run(["git", "log", "-1", "--pretty=%ci", path], capture_output=True)
+        dateText = result.stdout.decode("utf-8").strip()
+        parsedDate = parse(dateText)
+        self.lastChanged = parsedDate.isoformat()
+
+        self.override()
+
+    def override(self):
+        self.target = self.overrides["target"] if "target" in self.overrides else self.target
 
     def verify(self):
         if self.repoUrl is None:
@@ -87,14 +131,47 @@ class RepoReference:
         
         self.previewImage = f"https://raw.githubusercontent.com/suchmememanyskill/CssLoader-ThemeDb/main/{self.previewImagePath}"
     
+    def existsInMegaJson(self) -> bool:
+        self.megaJsonEntry = megaJson.getMegaJsonEntry(self.id)
+        return self.megaJsonEntry != None
+
     def toDict(self):
+        themeId = self.id
+        downloadUrl = self.downloadUrl
+        previewImage = self.previewImage
+        name = None
+        version = None
+        author = None
+        lastChanged = self.lastChanged
+        target = self.target
+
+        if self.repo != None:
+            name = self.repo.name
+            version = self.repo.version
+            author = self.repo.author
+            target = self.repo.target
+
+        if self.megaJsonEntry != None:
+            def possiblyReturnMegaJsonStuff(attribute : str, original):
+                return self.megaJsonEntry[attribute] if attribute in self.megaJsonEntry else original
+
+            themeId = possiblyReturnMegaJsonStuff("id", themeId)
+            downloadUrl = possiblyReturnMegaJsonStuff("download_url", downloadUrl)
+            previewImage = possiblyReturnMegaJsonStuff("preview_image", previewImage)
+            name = possiblyReturnMegaJsonStuff("name", name)
+            version = possiblyReturnMegaJsonStuff("version", version)
+            author = possiblyReturnMegaJsonStuff("author", author)
+            target = possiblyReturnMegaJsonStuff("target", target)
+        
         return {
-            "id": self.id,
-            "download_url": self.downloadUrl,
-            "preview_image": self.previewImage,
-            "name": self.repo.name,
-            "version": self.repo.version,
-            "author": self.repo.author
+            "id": themeId,
+            "download_url": downloadUrl,
+            "preview_image": previewImage,
+            "name": name,
+            "version": version,
+            "author": author,
+            "last_changed": lastChanged,
+            "target": target,
         }
     
 class Repo:
@@ -104,6 +181,7 @@ class Repo:
         self.name = None
         self.version = None
         self.author = None
+        self.target = repoReference.target
         self.themePath = None
         self.repoPath = None
     
@@ -146,8 +224,7 @@ class Repo:
         tempDir.cleanup()
     
     def upload(self):
-        self.hex = binascii.hexlify(hashlib.sha256(f"{self.repoReference.repoUrl}.{self.repoReference.repoSubpath}.{self.repoReference.repoCommit}".encode("utf-8")).digest()).decode("ascii")
-        self.repoReference.id = self.hex
+        self.hex = self.repoReference.id
 
         if (b2ThemeBucket.fileExists(f"{self.hex}.zip")):
             self.repoReference.downloadUrl = b2ThemeBucket.getFileUrl(f"{self.hex}.zip")
@@ -169,6 +246,7 @@ class Repo:
         self.name = json["name"] if "name" in json else None
         self.version = json["version"] if "version" in json else "v1.0"
         self.author = json["author"] if "author" in json else None # This isn't required by the css loader but should be for the theme store 
+        self.target = json["target"] if "target" in json else self.target # This isn't used by the css loader but used for sorting instead
 
     def verify(self):
         if self.json is None:
@@ -179,6 +257,12 @@ class Repo:
         
         if self.author is None:
             raise Exception("Theme has no author")
+        
+        if (self.target is None):
+            raise Exception("Theme has no target!")
+
+        if (self.target not in VALID_TARGETS):
+            raise Exception(f"'{self.target}' is not a valid target!")
 
         expectedFiles = [join(self.themePath, "theme.json")]
         
@@ -251,13 +335,30 @@ for x in files:
     with open(path, "r") as fp:
         data = json.load(fp)
 
-    reference = RepoReference(data)
+    reference = RepoReference(data, path)
     reference.verify()
+
+    if not FORCE_REFRESH and reference.existsInMegaJson():
+        print(f"Skipping {path} as it's up to date")
+        themes.append(reference.toDict())
+        continue
 
     repo = Repo(reference)
     repo.get()
     reference.repo = repo
     themes.append(reference.toDict())
+
+print("Verifying there are no identical themes")
+for x in themes:
+    if len([y for y in themes if y["name"] == x["name"]]) > 1:
+        raise Exception(f"Multiple themes with the same name detected in the repository! Name is '{x['name']}'")
+
+print("Sorting db...")
+
+def getName(elem):
+    return elem["name"]
+
+themes.sort(key=getName)
 
 print("Done! Dumping result")
 with open("themes.json", 'w') as fp:
