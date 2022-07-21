@@ -2,5 +2,5 @@
     "repo_url": "https://github.com/vrman123/PoyomannSteamDeckThemes", # Required, points to another github repository with the theme
     "repo_subpath": "RGB keyboard", # Optional, defaults to '.', indicates the subpath to the folder containing the theme
     "repo_commit": "c5a4d3f", # Required, the commit in the git repo you want to release
-    "preview_image_path": "images/RGB keyboard.jpg" # Required. This image is displayed in the browse themes UI of the plugin. The image needs to be located in this repository
+    "preview_image_path": "images/Party Wumpus/RGB keyboard.jpg" # Required. This image is displayed in the browse themes UI of the plugin. The image needs to be located in this repository
 }
