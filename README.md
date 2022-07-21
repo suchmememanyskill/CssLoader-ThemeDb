@@ -3,9 +3,9 @@ A repo containing themes for SDH-CssLoader
 
 # Making a theme for SDH-CssLoader
 ## Prerequisites
-- You have some experience in json and css
-- You have installed the Css loader
-- (Optional) Have a chromium based browser installed
+- Some experience in json and css
+- Installed the Css loader
+- (Optional) Installed a chromium based browser
 
 ## Setting up the CEF debugger (Optional)
 ![Debugger](images/Readme/Debugger.png)
@@ -26,7 +26,7 @@ The debugger allows you to access the multiple tabs that are used for the UI. A 
     - After selecting a tab, you should be able to see the html and css used for that specific tab, like the screenshot above
 
 ## Making a theme compatible with the Css Loader
-Themes are folders with css files and a single `theme.json` inside. The theme.json determines how everything will be displayed, and any dropdown options if the theme has them. The Css Loader loads themes from `/home/deck/homebrew/themes`
+Themes are folders with css files and a single `theme.json` inside. The `theme.json` determines how everything will be displayed, and any dropdown options if the theme has them. The Css Loader loads themes from `/home/deck/homebrew/themes`
 
 ### Simple themes
 ![SimpleTheme](images/Readme/simpletheme.png)
