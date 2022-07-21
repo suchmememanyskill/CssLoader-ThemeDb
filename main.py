@@ -6,7 +6,8 @@ from dateutil.parser import parse
 
 files = [f for f in listdir("./themes") if isfile(join("./themes", f)) and f.endswith(".json")]
 
-UPLOAD_FILES = len(sys.argv) > 1 and sys.argv[1] == "upload"
+UPLOAD_FILES = "upload" in sys.argv
+FORCE_REFRESH = "force" in sys.argv
 
 # Stolen from https://github.com/backblaze-b2-samples/b2-python-s3-sample/blob/main/sample.py
 class B2Bucket():
@@ -304,7 +305,7 @@ for x in files:
     reference = RepoReference(data, path)
     reference.verify()
 
-    if (reference.existsInMegaJson()):
+    if not FORCE_REFRESH and reference.existsInMegaJson():
         print(f"Skipping {path} as it's up to date")
         themes.append(reference.toDict())
         continue
