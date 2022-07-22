@@ -106,6 +106,15 @@ A complex theme is a simple theme with patches. Patches are displayed as dropdow
 
 # Submitting a theme to the theme store
 
+Note: A pull request to this repository has a specific template to adhere to. Please make sure your theme adheres to the checklist below
+- [ ] I am the original author of this theme.
+- [ ] I am not bundling a part of another theme with my theme, to encourage mixing and matching themes
+- [ ] I marked my theme target appropriately, and made sure my theme only themes the part it says it does
+    - [ ] If this is a keyboard theme, this theme gets applied to the default keyboard
+- [ ] I have verified that my theme works properly on the latest versions of SteamOS, decky-loader and SDH-CssLoader.
+
+### Steps to submit a theme
+
 1. Fork this repository
 2. Clone the forked repository to your pc using your favorite git tool
 3. Create a preview image and place it in the images folder. Preferably make a subfolder with your username
