@@ -140,3 +140,5 @@ Note: A pull request to this repository has a specific template to adhere to. Pl
     "preview_image_path": "images/SuchMeme/Clean Gameview.jpg"
 }
 ```
+
+If you need any help submitting a theme, [i have a discord server where you can ask for help](https://discord.gg/aH9rsuP)
