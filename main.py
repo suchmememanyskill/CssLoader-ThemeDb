@@ -330,8 +330,8 @@ class Repo:
 
         print(f"Total theme size is {totalSize} bytes")
 
-        if (totalSize > 0x100000): # 1 MB max per theme
-            raise Exception("Total theme size exceeds 1MB")
+        if (totalSize > 0xA00000): # 10 MB max per theme
+            raise Exception("Total theme size exceeds 10MB")
 
     
 
