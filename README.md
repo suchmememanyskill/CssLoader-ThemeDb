@@ -52,6 +52,7 @@ For a simple theme, like the image above, the theme json should look something l
     - System-Wide
     - Keyboard
     - Home
+    - Background
     - Library
     - Store
     - Friends and Chat

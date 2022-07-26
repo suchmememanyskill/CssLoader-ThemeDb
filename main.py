@@ -13,6 +13,7 @@ VALID_TARGETS = [
     "System-Wide",
     "Keyboard",
     "Home",
+    "Background",
     "Library",
     "Store",
     "Friends and Chat",
