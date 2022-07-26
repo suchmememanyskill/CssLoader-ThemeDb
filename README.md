@@ -1,37 +1,44 @@
-# CssLoader-ThemeDb
-A repo containing themes for SDH-CssLoader
+# CSS Loader - Theme Database
+A repo containing themes for [SDH-CssLoader](https://github.com/suchmememanyskill/SDH-CssLoader), a CSS loader for the Steam Deck.
+
+* [Making a theme for SDH-CssLoader](#making-a-theme-for-sdh-cssloader)
+    * [Prerequisites](#prerequisites)
+    * [Setting up the CEF debugger (Optional)](#setting-up-the-cef-debugger-optional)
+    * [Making a theme compatible with the CSS loader](#making-a-theme-compatible-with-the-css-loader)
+* [Submitting a theme to the theme store](#submitting-a-theme-to-the-theme-store)
+* [Support](#support)
 
 # Making a theme for SDH-CssLoader
 ## Prerequisites
-- Some experience in json and css
-- Installed the Css loader
-- (Optional) Installed a chromium based browser
+- Some experience in JSON and CSS
+- Installed the CSS loader
+- (Optional) Installed a Chromium-based browser
 
 ## Setting up the CEF debugger (Optional)
 ![Debugger](images/Readme/Debugger.png)
 
-The CEF debugger is very useful for creating themes, as it allows you to play around directly with the style of the Steam deck UI.
+The CEF debugger is very useful for creating themes, as it allows you to play around directly with the style of the Steam Deck UI.
 
 The debugger allows you to access the multiple tabs that are used for the UI. A few common ones are:
-- `SP`: The main UI of the steam deck
-- `QuickAccess`: The quick access overlay
+- `SP`: The main UI of the Steam Deck
+- `QuickAccess`: The Quick Access overlay
 - `MainMenu` The Steam menu overlay
 
 ### Setup
-1. Open a chromium based browser
-2. Connect to `{deck ip}:8081` in the browser
-    - You need to be on the same network as your deck
-    - You can find the ip of your deck by going into your internet settings, selecting the current connected network, and looking at the `IP Address` field
+1. Open a Chromium-based browser (ex. Google Chrome, Brave, Opera)
+2. Connect to `{DECK_IP}:8081` in the browser
+    - You need to be on the same network as your Steam Deck
+    - You can find the IP of your Steam Deck by going into your internet settings, selecting the current connected network, and looking at the `IP Address` field
 3. Select a tab
-    - After selecting a tab, you should be able to see the html and css used for that specific tab, like the screenshot above
+    - After selecting a tab, you should be able to see the HTML and CSS used for that specific tab, like the screenshot above
 
-## Making a theme compatible with the Css Loader
-Themes are folders with css files and a single `theme.json` inside. The `theme.json` determines how everything will be displayed, and any dropdown options if the theme has them. The Css Loader loads themes from `/home/deck/homebrew/themes`
+## Making a theme compatible with the CSS loader
+Themes are folders with CSS files and a single `theme.json` inside. The `theme.json` determines how everything will be displayed, and any dropdown options if the theme has them. The CSS loader loads themes from `/home/deck/homebrew/themes`.
 
 ### Simple themes
 ![SimpleTheme](images/Readme/simpletheme.png)
 
-For a simple theme, like the image above, the theme json should look something like this
+For a simple theme, like the image above, `theme.json` should look something like this:
 
 ```json
 {
@@ -46,10 +53,11 @@ For a simple theme, like the image above, the theme json should look something l
 
 - The name element describes the theme name. This is also used as the folder name for the theme store.
 - The author element describes the theme author.
-- An optional field `"version": "v1.0"` can be added. If no version field is found, the version defaults to `v1.0`
-- The inject tab is a dictionary of relative css file paths as keys, and a list of tabs you want the css to be injected into
-- The target field describes what part of the UI your theme themes. This is only useful for submitting a theme. The following options are available: (Note: if you want an option to be added, open an issue on this repository)
+- An optional field `"version": "v1.0"` can be added. If no version field is found, the version defaults to `v1.0`.
+- The inject tab is a dictionary of relative CSS file paths as keys, and a list of tabs you want the CSS to be injected into.
+- The target field describes what part of the UI your theme themes. This is only useful for submitting a theme. The following options are available, but more can be added through creating an issue:
     - System-Wide
+    - Background
     - Keyboard
     - Home
     - Library
@@ -65,7 +73,7 @@ For a simple theme, like the image above, the theme json should look something l
 ### Complex themes
 ![ComplexTheme](images/Readme/complextheme.png)
 
-A complex theme is a simple theme with patches. Patches are displayed as dropdown menus that apply additional css depending on the selection. A complex theme's json should look something like this:
+A complex theme is a theme with patches. Patches are displayed as dropdown menus that apply additional CSS depending on the selection. The `theme.json` for a complex theme should look something like this:
 
 ```json
 {
@@ -102,36 +110,30 @@ A complex theme is a simple theme with patches. Patches are displayed as dropdow
 }
 ```
 
-- The patches section is a dictionary of patch names as key. The value is another dictionary, which keys are it's options, and their value is the same as the value of the "inject" section. A special key "default" is required to indicate which key is the default option
+- The patches section is a dictionary of patch names as key. The value is a dictionary where keys are it's options and their value is the applied CSS, similar to the "inject" section. The special key "default" is required to indicate a default option.
 
 # Submitting a theme to the theme store
 
-Note: A pull request to this repository has a specific template to adhere to. Please make sure your theme adheres to the checklist below
-- [ ] I am the original author of this theme.
-- [ ] I am not bundling a part of another theme with my theme (or are making it optional with patches), to encourage mixing and matching themes
-- [ ] I marked my theme target appropriately, and made sure my theme only themes the part it says it does
-    - [ ] If this is a keyboard theme, this theme gets applied to the default keyboard
-    - [ ] If this is a System-Wide theme, this theme does not bundle a keyboard theme (or are making it optional with patches)
-- [ ] I have verified that my theme works properly on the latest versions of SteamOS, decky-loader and SDH-CssLoader.
-
-### Steps to submit a theme
+A pull request to this repository has a specific template to adhere to. Please make sure your theme adheres to [these requirements](https://github.com/EMERALD0874/CssLoader-ThemeDb/blob/main/.github/pull_request_template.md).
 
 1. Fork this repository
-2. Clone the forked repository to your pc using your favorite git tool
-3. Create a preview image and place it in the images folder. Preferably make a subfolder with your username
+2. Clone the forked repository to your PC using your favorite Git tool
+3. Create a preview image and place it in the `images/{AUTHOR}` folder
     - Preferably upload an image in the .jpg format
-4. Create a json called `{author}-{themename}.json` in the themes folder, with the following content: (See an example/template below)
-    - `repo_url`: Required, points to another github repository with the theme
+4. Create a JSON file named `{AUTHOR}-{THEME_NAME}.json` in the themes folder with the following content:
+    - `repo_url`: Required, points to another GitHub repository with the theme
     - `repo_subpath`: Optional, defaults to '.', indicates the subpath to the folder containing the theme
-    - `repo_commit`: Required, the commit in the git repo you want to release
-    - `preview_image_path`: Required. This image is displayed in the browse themes UI of the plugin. The image needs to be located in this repository
-5. (Optional) Test your theme submission using the python script, using `py main.py` in the repository folder.
-    - Python and git cli needs to be installed
-    - If you are missing python libraries, type `pip install -r requirements.txt`
-    - If the script throws no exception, you're good
-6. Make a commit with the image and .json files. Feel free to put multiple themes in 1 commit
-7. Create a pull request back to this repository 
+    - `repo_commit`: Required, the commit in the Git repo you want to release
+    - `preview_image_path`: Required. This image is displayed in the browse themes UI of the plugin and must be located in this repository
+5. (Optional) Test your theme submission using `py main.py` in the repository folder
+    - Python and Git CLI need to be installed
+    - If you are missing Python libraries, type `pip install -r requirements.txt`
+    - If the script throws no exception, you are ready to commit
+6. Make a commit with the image and JSON files
+7. (Optional) Repeat steps 3 through 6 for any additional themes you would like to add to your pull request
+8. Create a pull request from your fork to this repository
 
+Here is an example `{AUTHOR}-{THEME_NAME}.json` file:
 ```json
 {
     "repo_url": "https://github.com/suchmememanyskill/Steam-Deck-Themes",
@@ -141,4 +143,5 @@ Note: A pull request to this repository has a specific template to adhere to. Pl
 }
 ```
 
-If you need any help submitting a theme, [i have a discord server where you can ask for help](https://discord.gg/aH9rsuP)
+# Support
+If you need any help creating or submitting a theme, [we have a Discord server where you can ask for help](https://discord.gg/aH9rsuP).
