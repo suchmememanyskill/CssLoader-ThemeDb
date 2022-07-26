@@ -279,7 +279,9 @@ class Repo:
                     raise Exception(f"Inject contains a non-css file '{x}'!")
                 
                 print(f"{x} exists in theme")
-                expectedFiles.append(join(self.themePath, x))
+                filePath = join(self.themePath, x)
+                if filePath not in expectedFiles:
+                    expectedFiles.append(filePath)
         
         if "patches" in self.json:
             for x in self.json["patches"]:
@@ -297,7 +299,9 @@ class Repo:
                                 raise Exception(f"Path {x} contains a non-css file '{z}'!")
 
                             print(f"{z} exists in theme")
-                            expectedFiles.append(join(self.themePath, z))
+                            filePath = join(self.themePath, z)
+                            if filePath not in expectedFiles:
+                                expectedFiles.append(filePath)
         
         actualFiles = []
 
