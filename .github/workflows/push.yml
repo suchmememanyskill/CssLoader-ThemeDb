@@ -36,6 +36,7 @@ jobs:
           SECRET_APPLICATIONKEY: ${{ secrets.SECRET_APPLICATIONKEY }}
           SECRET_ENDPOINT: ${{ secrets.SECRET_ENDPOINT }}
           SECRET_KEYID: ${{ secrets.SECRET_KEYID }}
+          SECRET_DISCORD_WEBHOOKS: ${{ secrets.SECRET_DISCORD_WEBHOOKS }}
         name: Build themes.json
         run: python3 main.py upload
 
