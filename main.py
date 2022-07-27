@@ -340,7 +340,7 @@ class DiscordWebhooks:
         envStr = os.getenv("SECRET_DISCORD_WEBHOOKS")
         self.urls = []
         if (envStr != None):
-            self.urls = envStr.split("|")
+            self.urls = envStr.split("@")
     
     def send(self, repo : Repo):
         if (self.urls == []):
