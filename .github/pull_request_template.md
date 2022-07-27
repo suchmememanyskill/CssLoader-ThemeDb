@@ -7,8 +7,8 @@ Insert a link to the GitHub repository of the theme and describe the major chang
 Failure to complete this checklist or deleting boxes from the checklist will result in the closing of your pull request. Please write any comments regarding this checklist at the bottom of your pull request.
 
 Check every box.
-- [ ] I am the original author of this theme. All copyright of its contents belong to me or is cited in the repository linked above.
-- [ ] I understand that I am releasing the source code to my theme under the [MIT License](https://github.com/EMERALD0874/CssLoader-ThemeDb/blob/main/LICENSE) included in this repository.
+- [ ] I am the original author of this theme or have permission from the original author to make this pull request.
+- [ ] All copyright of this theme's contents belong to me or is cited in the repository linked above.
 - [ ] I have marked my theme target appropriately and only style said target.
 - [ ] I have verified that my theme works properly on the latest versions of SteamOS for Steam Deck, [decky-loader](https://github.com/SteamDeckHomebrew/decky-loader) and [SDH-CssLoader](https://github.com/suchmememanyskill/SDH-CssLoader).
 - [ ] My theme only uses `*` or `!important` if absolutely necessary.
