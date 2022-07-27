@@ -3,6 +3,7 @@ from os.path import isfile, join
 import json, subprocess, tempfile, os, time, uuid, boto3, binascii, hashlib, sys, shutil, requests
 from botocore.config import Config
 from dateutil.parser import parse
+from discord_webhook import DiscordWebhook, DiscordEmbed
 
 files = [f for f in listdir("./themes") if isfile(join("./themes", f)) and f.endswith(".json")]
 
@@ -334,7 +335,29 @@ class Repo:
         if (totalSize > 0xA00000): # 10 MB max per theme
             raise Exception("Total theme size exceeds 10MB")
 
+class DiscordWebhooks:
+    def __init__(self):
+        envStr = os.getenv("SECRET_DISCORD_WEBHOOKS")
+        self.urls = []
+        if (envStr != None):
+            self.urls = envStr.split("|")
     
+    def send(self, repo : Repo):
+        if (self.urls == []):
+            return
+        
+        try:
+            webhook = DiscordWebhook(self.urls, rate_limit_retry=True)
+            embed = DiscordEmbed(title=repo.name, description=repo.target, color="03b2f8")
+            embed.set_image(url=repo.repoReference.previewImage.replace(" ", "%20"))
+            embed.set_footer(text=f"By {repo.author} | {repo.version}")
+            webhook.add_embed(embed)
+            webhook.execute()
+        except Exception as e:
+            print(f"Failed to send webhook... {str(e)}")
+    
+
+webhooks = DiscordWebhooks()
 
 themes = []
 
@@ -355,6 +378,8 @@ for x in files:
     repo = Repo(reference)
     repo.get()
     reference.repo = repo
+
+    webhooks.send(repo)
     themes.append(reference.toDict())
 
 print("Verifying there are no identical themes")
