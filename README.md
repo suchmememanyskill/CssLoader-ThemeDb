@@ -20,9 +20,9 @@ A repo containing themes for [SDH-CssLoader](https://github.com/suchmememanyskil
 The CEF debugger is very useful for creating themes, as it allows you to play around directly with the style of the Steam Deck UI.
 
 The debugger allows you to access the multiple tabs that are used for the UI. A few common ones are:
-- `SP`: The main UI of the Steam Deck
-- `QuickAccess`: The Quick Access overlay
-- `MainMenu` The Steam menu overlay
+- `SP` - The main UI of the Steam Deck
+- `QuickAccess` - The Quick Access overlay
+- `MainMenu` - The Steam menu overlay
 
 ### Setup
 1. Open a Chromium-based browser (ex. Google Chrome, Microsoft Edge, Brave)
