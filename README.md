@@ -25,7 +25,7 @@ The debugger allows you to access the multiple tabs that are used for the UI. A 
 - `MainMenu` The Steam menu overlay
 
 ### Setup
-1. Open a Chromium-based browser (ex. Google Chrome, Brave, Opera)
+1. Open a Chromium-based browser (ex. Google Chrome, Microsoft Edge, Brave)
 2. Connect to `{DECK_IP}:8081` in the browser
     - You need to be on the same network as your Steam Deck
     - You can find the IP of your Steam Deck by going into your internet settings, selecting the current connected network, and looking at the `IP Address` field
