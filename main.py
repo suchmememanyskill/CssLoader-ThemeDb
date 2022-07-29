@@ -150,6 +150,7 @@ class RepoReference:
         author = None
         lastChanged = self.lastChanged
         target = self.target
+        repo = self.repoUrl
 
         if self.repo != None:
             name = self.repo.name
@@ -178,6 +179,7 @@ class RepoReference:
             "author": author,
             "last_changed": lastChanged,
             "target": target,
+            "source": repo,
         }
     
 class Repo:
