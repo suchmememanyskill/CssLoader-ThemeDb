@@ -51,3 +51,8 @@ jobs:
           asset_name: themes.json # name to upload the release as, use $$ to insert date (YYYYMMDD) and 6 letter commit hash
           asset_content_type: application/json # required by GitHub API
           max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
+      
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Generated Theme Zips
+          path: zips

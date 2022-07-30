@@ -5,6 +5,11 @@ from botocore.config import Config
 from dateutil.parser import parse
 from discord_webhook import DiscordWebhook, DiscordEmbed
 
+if (os.path.exists("zips")):
+    shutil.rmtree("zips")
+
+os.mkdir("zips")
+
 files = [f for f in listdir("./themes") if isfile(join("./themes", f)) and f.endswith(".json")]
 
 UPLOAD_FILES = "upload" in sys.argv
@@ -190,6 +195,7 @@ class Repo:
         self.version = None
         self.author = None
         self.target = repoReference.target
+        self.hex = self.repoReference.id
         self.themePath = None
         self.repoPath = None
     
@@ -224,6 +230,7 @@ class Repo:
         
         self.read(data)
         self.verify()
+        self.zip()
 
         if (UPLOAD_FILES):
             self.upload()
@@ -231,23 +238,22 @@ class Repo:
         print("Cleaning up temp dir...")
         tempDir.cleanup()
     
-    def upload(self):
-        self.hex = self.repoReference.id
+    def zip(self):
+        tempDir = tempfile.TemporaryDirectory()
+        print(f"Generating zip...")
+        shutil.copytree(self.themePath, join(tempDir.name, self.name))
+        shutil.make_archive(join("zips", self.hex), "zip", tempDir.name, ".")
+        tempDir.cleanup()
 
+    def upload(self):
         if (b2ThemeBucket.fileExists(f"{self.hex}.zip")):
             self.repoReference.downloadUrl = b2ThemeBucket.getFileUrl(f"{self.hex}.zip")
             return
 
-        tempDir = tempfile.TemporaryDirectory()
-        print(f"Generating zip...")
-        shutil.copytree(self.themePath, join(tempDir.name, self.name))
-        shutil.make_archive(self.hex, "zip", tempDir.name, ".")
         print("Uploading zip...")
-        b2ThemeBucket.upload(f"{self.hex}.zip")
+        b2ThemeBucket.upload(join("zips",f"{self.hex}.zip"))
         b2ThemeBucket.loadFiles()
         self.repoReference.downloadUrl = b2ThemeBucket.getFileUrl(f"{self.hex}.zip")
-        tempDir.cleanup()
-
 
     def read(self, json : dict):
         self.json = json
