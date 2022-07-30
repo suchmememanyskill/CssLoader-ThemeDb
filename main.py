@@ -299,19 +299,37 @@ class Repo:
                 if "default" not in patch:
                     raise Exception(f"Missing default on patch {x}")
                 
-                for y in patch:
-                    if isinstance(patch[y], dict):
-                        for z in patch[y]:
+                if "type" in patch:
+                    if patch["type"] not in ["dropdown", "checkbox", "slider"]:
+                        raise Exception(f"Type '{patch['type']}' is not a valid type!")
+
+                default = patch["default"]
+                values = None
+
+                if "values" in patch: # V2 patch
+                    values = patch["values"]
+                else: # V1 patch
+                    values = patch
+                    del patch["default"]
+
+                if default not in values:
+                    raise Exception("Default does not exist")
+                
+                for y in values:
+                    if isinstance(values[y], dict):
+                        for z in values[y]:
                             if not os.path.exists(join(self.themePath, z)):
-                                raise Exception(f"Patch {x} contains css that does not exist")
+                                raise Exception(f"Patch '{x}' contains css that does not exist")
 
                             if not z.endswith(".css"):
-                                raise Exception(f"Path {x} contains a non-css file '{z}'!")
+                                raise Exception(f"Path '{x}' contains a non-css file '{z}'!")
 
                             print(f"{z} exists in theme")
                             filePath = join(self.themePath, z)
                             if filePath not in expectedFiles:
                                 expectedFiles.append(filePath)
+                    else:
+                        raise Exception(f"Non-dictionary in values of patch '{x}'")
         
         actualFiles = []
 
