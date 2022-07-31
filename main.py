@@ -5,6 +5,11 @@ from botocore.config import Config
 from dateutil.parser import parse
 from discord_webhook import DiscordWebhook, DiscordEmbed
 
+if (os.path.exists("zips")):
+    shutil.rmtree("zips")
+
+os.mkdir("zips")
+
 files = [f for f in listdir("./themes") if isfile(join("./themes", f)) and f.endswith(".json")]
 
 UPLOAD_FILES = "upload" in sys.argv
@@ -150,6 +155,7 @@ class RepoReference:
         author = None
         lastChanged = self.lastChanged
         target = self.target
+        repo = self.repoUrl
 
         if self.repo != None:
             name = self.repo.name
@@ -178,6 +184,7 @@ class RepoReference:
             "author": author,
             "last_changed": lastChanged,
             "target": target,
+            "source": repo,
         }
     
 class Repo:
@@ -188,6 +195,7 @@ class Repo:
         self.version = None
         self.author = None
         self.target = repoReference.target
+        self.hex = self.repoReference.id
         self.themePath = None
         self.repoPath = None
     
@@ -222,6 +230,7 @@ class Repo:
         
         self.read(data)
         self.verify()
+        self.zip()
 
         if (UPLOAD_FILES):
             self.upload()
@@ -229,23 +238,22 @@ class Repo:
         print("Cleaning up temp dir...")
         tempDir.cleanup()
     
-    def upload(self):
-        self.hex = self.repoReference.id
+    def zip(self):
+        tempDir = tempfile.TemporaryDirectory()
+        print(f"Generating zip...")
+        shutil.copytree(self.themePath, join(tempDir.name, self.name))
+        shutil.make_archive(join("zips", self.hex), "zip", tempDir.name, ".")
+        tempDir.cleanup()
 
+    def upload(self):
         if (b2ThemeBucket.fileExists(f"{self.hex}.zip")):
             self.repoReference.downloadUrl = b2ThemeBucket.getFileUrl(f"{self.hex}.zip")
             return
 
-        tempDir = tempfile.TemporaryDirectory()
-        print(f"Generating zip...")
-        shutil.copytree(self.themePath, join(tempDir.name, self.name))
-        shutil.make_archive(self.hex, "zip", tempDir.name, ".")
         print("Uploading zip...")
-        b2ThemeBucket.upload(f"{self.hex}.zip")
+        b2ThemeBucket.upload(join("zips",f"{self.hex}.zip"))
         b2ThemeBucket.loadFiles()
         self.repoReference.downloadUrl = b2ThemeBucket.getFileUrl(f"{self.hex}.zip")
-        tempDir.cleanup()
-
 
     def read(self, json : dict):
         self.json = json
@@ -291,19 +299,37 @@ class Repo:
                 if "default" not in patch:
                     raise Exception(f"Missing default on patch {x}")
                 
-                for y in patch:
-                    if isinstance(patch[y], dict):
-                        for z in patch[y]:
+                if "type" in patch:
+                    if patch["type"] not in ["dropdown", "checkbox", "slider"]:
+                        raise Exception(f"Type '{patch['type']}' is not a valid type!")
+
+                default = patch["default"]
+                values = None
+
+                if "values" in patch: # V2 patch
+                    values = patch["values"]
+                else: # V1 patch
+                    values = patch
+                    del patch["default"]
+
+                if default not in values:
+                    raise Exception("Default does not exist")
+                
+                for y in values:
+                    if isinstance(values[y], dict):
+                        for z in values[y]:
                             if not os.path.exists(join(self.themePath, z)):
-                                raise Exception(f"Patch {x} contains css that does not exist")
+                                raise Exception(f"Patch '{x}' contains css that does not exist")
 
                             if not z.endswith(".css"):
-                                raise Exception(f"Path {x} contains a non-css file '{z}'!")
+                                raise Exception(f"Path '{x}' contains a non-css file '{z}'!")
 
                             print(f"{z} exists in theme")
                             filePath = join(self.themePath, z)
                             if filePath not in expectedFiles:
                                 expectedFiles.append(filePath)
+                    else:
+                        raise Exception(f"Non-dictionary in values of patch '{x}'")
         
         actualFiles = []
 
