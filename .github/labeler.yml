@@ -1,0 +1,5 @@
+new theme:
+  - all: ["themes/*", "images/**/*"]
+
+theme update:
+  - all: ["themes/*", "!images/**/*"]
