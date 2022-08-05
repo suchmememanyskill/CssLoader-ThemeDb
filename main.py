@@ -156,12 +156,14 @@ class RepoReference:
         lastChanged = self.lastChanged
         target = self.target
         repo = self.repoUrl
+        manifestVersion = 1
 
         if self.repo != None:
             name = self.repo.name
             version = self.repo.version
             author = self.repo.author
             target = self.repo.target
+            manifestVersion = self.repo.manifestVersion
 
         if self.megaJsonEntry != None:
             def possiblyReturnMegaJsonStuff(attribute : str, original):
@@ -174,6 +176,7 @@ class RepoReference:
             version = possiblyReturnMegaJsonStuff("version", version)
             author = possiblyReturnMegaJsonStuff("author", author)
             target = possiblyReturnMegaJsonStuff("target", target)
+            manifestVersion = possiblyReturnMegaJsonStuff("manifest_version", manifestVersion)
         
         return {
             "id": themeId,
@@ -185,6 +188,7 @@ class RepoReference:
             "last_changed": lastChanged,
             "target": target,
             "source": repo,
+            "manifest_version": manifestVersion,
         }
     
 class Repo:
@@ -198,6 +202,7 @@ class Repo:
         self.hex = self.repoReference.id
         self.themePath = None
         self.repoPath = None
+        self.manifestVersion = None
     
     def get(self):
         tempDir = tempfile.TemporaryDirectory()
@@ -261,6 +266,7 @@ class Repo:
         self.version = json["version"] if "version" in json else "v1.0"
         self.author = json["author"] if "author" in json else None # This isn't required by the css loader but should be for the theme store 
         self.target = json["target"] if "target" in json else self.target # This isn't used by the css loader but used for sorting instead
+        self.manifestVersion = int(json["manifest_version"]) if "manifest_version" in json else 1
 
     def verify(self):
         if self.json is None:
@@ -307,8 +313,14 @@ class Repo:
                 values = None
 
                 if "values" in patch: # V2 patch
+                    if self.manifestVersion < 2: # Manifest version needs to be set to 2 or above to support v2 patches
+                        raise Exception("A v2 Patch was detected but a v1 manifest was provided")
+
                     values = patch["values"]
                 else: # V1 patch
+                    if self.manifestVersion > 1: # Manifest version needs to be set to 1 or below to support v1 patches
+                        raise Exception("A v1 patch was detected but a v2 manifest was provided")
+
                     values = patch
                     del patch["default"]
 
