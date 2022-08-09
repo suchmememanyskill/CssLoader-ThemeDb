@@ -3,6 +3,12 @@ from os.path import isfile, join
 import json, subprocess, tempfile, os, time, uuid, boto3, binascii, hashlib, sys, shutil, requests
 from botocore.config import Config
 from dateutil.parser import parse
+from discord_webhook import DiscordWebhook, DiscordEmbed
+
+if (os.path.exists("zips")):
+    shutil.rmtree("zips")
+
+os.mkdir("zips")
 
 files = [f for f in listdir("./themes") if isfile(join("./themes", f)) and f.endswith(".json")]
 
@@ -149,12 +155,15 @@ class RepoReference:
         author = None
         lastChanged = self.lastChanged
         target = self.target
+        repo = self.repoUrl
+        manifestVersion = 1
 
         if self.repo != None:
             name = self.repo.name
             version = self.repo.version
             author = self.repo.author
             target = self.repo.target
+            manifestVersion = self.repo.manifestVersion
 
         if self.megaJsonEntry != None:
             def possiblyReturnMegaJsonStuff(attribute : str, original):
@@ -167,6 +176,7 @@ class RepoReference:
             version = possiblyReturnMegaJsonStuff("version", version)
             author = possiblyReturnMegaJsonStuff("author", author)
             target = possiblyReturnMegaJsonStuff("target", target)
+            manifestVersion = possiblyReturnMegaJsonStuff("manifest_version", manifestVersion)
         
         return {
             "id": themeId,
@@ -177,6 +187,8 @@ class RepoReference:
             "author": author,
             "last_changed": lastChanged,
             "target": target,
+            "source": repo,
+            "manifest_version": manifestVersion,
         }
     
 class Repo:
@@ -187,8 +199,10 @@ class Repo:
         self.version = None
         self.author = None
         self.target = repoReference.target
+        self.hex = self.repoReference.id
         self.themePath = None
         self.repoPath = None
+        self.manifestVersion = None
     
     def get(self):
         tempDir = tempfile.TemporaryDirectory()
@@ -221,6 +235,7 @@ class Repo:
         
         self.read(data)
         self.verify()
+        self.zip()
 
         if (UPLOAD_FILES):
             self.upload()
@@ -228,23 +243,22 @@ class Repo:
         print("Cleaning up temp dir...")
         tempDir.cleanup()
     
-    def upload(self):
-        self.hex = self.repoReference.id
+    def zip(self):
+        tempDir = tempfile.TemporaryDirectory()
+        print(f"Generating zip...")
+        shutil.copytree(self.themePath, join(tempDir.name, self.name))
+        shutil.make_archive(join("zips", self.hex), "zip", tempDir.name, ".")
+        tempDir.cleanup()
 
+    def upload(self):
         if (b2ThemeBucket.fileExists(f"{self.hex}.zip")):
             self.repoReference.downloadUrl = b2ThemeBucket.getFileUrl(f"{self.hex}.zip")
             return
 
-        tempDir = tempfile.TemporaryDirectory()
-        print(f"Generating zip...")
-        shutil.copytree(self.themePath, join(tempDir.name, self.name))
-        shutil.make_archive(self.hex, "zip", tempDir.name, ".")
         print("Uploading zip...")
-        b2ThemeBucket.upload(f"{self.hex}.zip")
+        b2ThemeBucket.upload(join("zips",f"{self.hex}.zip"))
         b2ThemeBucket.loadFiles()
         self.repoReference.downloadUrl = b2ThemeBucket.getFileUrl(f"{self.hex}.zip")
-        tempDir.cleanup()
-
 
     def read(self, json : dict):
         self.json = json
@@ -252,6 +266,7 @@ class Repo:
         self.version = json["version"] if "version" in json else "v1.0"
         self.author = json["author"] if "author" in json else None # This isn't required by the css loader but should be for the theme store 
         self.target = json["target"] if "target" in json else self.target # This isn't used by the css loader but used for sorting instead
+        self.manifestVersion = int(json["manifest_version"]) if "manifest_version" in json else 1
 
     def verify(self):
         if self.json is None:
@@ -290,19 +305,43 @@ class Repo:
                 if "default" not in patch:
                     raise Exception(f"Missing default on patch {x}")
                 
-                for y in patch:
-                    if isinstance(patch[y], dict):
-                        for z in patch[y]:
+                if "type" in patch:
+                    if patch["type"] not in ["dropdown", "checkbox", "slider"]:
+                        raise Exception(f"Type '{patch['type']}' is not a valid type!")
+
+                default = patch["default"]
+                values = None
+
+                if "values" in patch: # V2 patch
+                    if self.manifestVersion < 2: # Manifest version needs to be set to 2 or above to support v2 patches
+                        raise Exception("A v2 Patch was detected but a v1 manifest was provided")
+
+                    values = patch["values"]
+                else: # V1 patch
+                    if self.manifestVersion > 1: # Manifest version needs to be set to 1 or below to support v1 patches
+                        raise Exception("A v1 patch was detected but a v2 manifest was provided")
+
+                    values = patch
+                    del patch["default"]
+
+                if default not in values:
+                    raise Exception("Default does not exist")
+                
+                for y in values:
+                    if isinstance(values[y], dict):
+                        for z in values[y]:
                             if not os.path.exists(join(self.themePath, z)):
-                                raise Exception(f"Patch {x} contains css that does not exist")
+                                raise Exception(f"Patch '{x}' contains css that does not exist")
 
                             if not z.endswith(".css"):
-                                raise Exception(f"Path {x} contains a non-css file '{z}'!")
+                                raise Exception(f"Path '{x}' contains a non-css file '{z}'!")
 
                             print(f"{z} exists in theme")
                             filePath = join(self.themePath, z)
                             if filePath not in expectedFiles:
                                 expectedFiles.append(filePath)
+                    else:
+                        raise Exception(f"Non-dictionary in values of patch '{x}'")
         
         actualFiles = []
 
@@ -334,7 +373,29 @@ class Repo:
         if (totalSize > 0xA00000): # 10 MB max per theme
             raise Exception("Total theme size exceeds 10MB")
 
+class DiscordWebhooks:
+    def __init__(self):
+        envStr = os.getenv("SECRET_DISCORD_WEBHOOKS")
+        self.urls = []
+        if (envStr != None):
+            self.urls = envStr.split("@")
     
+    def send(self, repo : Repo):
+        if (self.urls == []):
+            return
+        
+        try:
+            webhook = DiscordWebhook(self.urls, rate_limit_retry=True)
+            embed = DiscordEmbed(title=repo.name, description=repo.target, color="03b2f8")
+            embed.set_image(url=repo.repoReference.previewImage.replace(" ", "%20"))
+            embed.set_footer(text=f"By {repo.author} | {repo.version}")
+            webhook.add_embed(embed)
+            webhook.execute()
+        except Exception as e:
+            print(f"Failed to send webhook... {str(e)}")
+    
+
+webhooks = DiscordWebhooks()
 
 themes = []
 
@@ -355,6 +416,8 @@ for x in files:
     repo = Repo(reference)
     repo.get()
     reference.repo = repo
+
+    webhooks.send(repo)
     themes.append(reference.toDict())
 
 print("Verifying there are no identical themes")
