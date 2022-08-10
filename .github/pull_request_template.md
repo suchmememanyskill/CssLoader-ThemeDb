@@ -15,6 +15,7 @@ Check every box.
 - [ ] This theme is under 10MB in size and uses the least disk space possible.
 - [ ] This theme's preview image does not include text unless it is necessary to describe changes that can be made.
 - [ ] This theme is safe for work and does not contain any sexual, drug-related, or profane content.
+- [ ] This theme, if it uses css variables, prefixes said variables with a unique identifier
 
 Check one box.
 - [ ] I am not bundling a part of another theme with this theme to encourage mixing and matching themes.
