@@ -157,6 +157,7 @@ class RepoReference:
         target = self.target
         repo = self.repoUrl
         manifestVersion = 1
+        description = None
 
         if self.repo != None:
             name = self.repo.name
@@ -164,6 +165,7 @@ class RepoReference:
             author = self.repo.author
             target = self.repo.target
             manifestVersion = self.repo.manifestVersion
+            description = self.repo.description
 
         if self.megaJsonEntry != None:
             def possiblyReturnMegaJsonStuff(attribute : str, original):
@@ -177,6 +179,7 @@ class RepoReference:
             author = possiblyReturnMegaJsonStuff("author", author)
             target = possiblyReturnMegaJsonStuff("target", target)
             manifestVersion = possiblyReturnMegaJsonStuff("manifest_version", manifestVersion)
+            description = possiblyReturnMegaJsonStuff("description", description)
         
         return {
             "id": themeId,
@@ -189,6 +192,7 @@ class RepoReference:
             "target": target,
             "source": repo,
             "manifest_version": manifestVersion,
+            "description": description,
         }
     
 class Repo:
@@ -203,6 +207,7 @@ class Repo:
         self.themePath = None
         self.repoPath = None
         self.manifestVersion = None
+        self.description = None 
     
     def get(self):
         tempDir = tempfile.TemporaryDirectory()
@@ -262,11 +267,12 @@ class Repo:
 
     def read(self, json : dict):
         self.json = json
-        self.name = json["name"] if "name" in json else None
-        self.version = json["version"] if "version" in json else "v1.0"
-        self.author = json["author"] if "author" in json else None # This isn't required by the css loader but should be for the theme store 
-        self.target = json["target"] if "target" in json else self.target # This isn't used by the css loader but used for sorting instead
+        self.name = str(json["name"]) if "name" in json else None
+        self.version = str(json["version"]) if "version" in json else "v1.0"
+        self.author = str(json["author"]) if "author" in json else None # This isn't required by the css loader but should be for the theme store 
+        self.target = str(json["target"]) if "target" in json else self.target # This isn't used by the css loader but used for sorting instead
         self.manifestVersion = int(json["manifest_version"]) if "manifest_version" in json else 1
+        self.description = str(json["description"]) if "description" in json else ""
 
     def verify(self):
         if self.json is None:
