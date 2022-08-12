@@ -86,7 +86,7 @@ if (UPLOAD_FILES):
 
 class MegaJson():
     def __init__(self):
-        self.megaJson = requests.get("https://github.com/suchmememanyskill/CssLoader-ThemeDb/releases/download/1.0.0/themes.json").json()
+        self.megaJson = requests.get("https://github.com/suchmememanyskill/CssLoader-ThemeDb/releases/download/1.1.0/themes.json").json()
 
     def getMegaJsonEntry(self, themeId : str) -> dict:
         for x in self.megaJson:

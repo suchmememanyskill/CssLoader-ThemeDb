@@ -4,9 +4,14 @@ A repo containing themes for [SDH-CssLoader](https://github.com/suchmememanyskil
 * [Making a theme for SDH-CssLoader](#making-a-theme-for-sdh-cssloader)
     * [Prerequisites](#prerequisites)
     * [Setting up the CEF debugger (Optional)](#setting-up-the-cef-debugger-optional)
+        * [Recommended Setup](#recommended-setup)
+        * [Legacy Setup](#legacy-setup)
     * [Making a theme compatible with the CSS loader](#making-a-theme-compatible-with-the-css-loader)
+        * [Simple themes](#simple-themes)
+        * [Complex themes](#complex-themes)
 * [Submitting a theme to the theme store](#submitting-a-theme-to-the-theme-store)
 * [Support](#support)
+    * [Upgrading a theme](#upgrading-a-theme)
 
 # Making a theme for SDH-CssLoader
 ## Prerequisites
@@ -24,9 +29,17 @@ The debugger allows you to access the multiple tabs that are used for the UI. A 
 - `QuickAccess` - The Quick Access overlay
 - `MainMenu` - The Steam menu overlay
 
-### Setup
+### Recommended Setup
 1. Open a Chromium-based browser (ex. Google Chrome, Microsoft Edge, Brave)
-2. Connect to `{DECK_IP}:8081` in the browser
+2. Go to the inspect page of your browser (ex. chrome://inspect, edge://inspect, brave://inspect)
+3. Under "Discover network targets", click "Configure", and enter "{DECK_IP}:8081"
+    - You can find the IP of your Steam Deck by going into your internet settings, selecting the current connected network, and looking at the `IP Address` field
+4. Wait a few seconds, and you will see multiple tabs appear under "Remote Target"
+    - After selecting a tab, you should be able to see the HTML and CSS used for that specific tab, like the screenshot above
+
+### Legacy Setup 
+1. Open a Chromium-based browser (ex. Google Chrome, Microsoft Edge, Brave)
+2. Connect to {DECK_IP}:8081 in the browser
     - You need to be on the same network as your Steam Deck
     - You can find the IP of your Steam Deck by going into your internet settings, selecting the current connected network, and looking at the `IP Address` field
 3. Select a tab
@@ -45,6 +58,7 @@ For a simple theme, like the image above, `theme.json` should look something lik
     "name": "Clean Gameview",
     "author": "SuchMeme",
     "target": "Library",
+    "manifest_version": 2,
     "inject": {
         "shared.css": ["SP"]
     }
@@ -54,6 +68,7 @@ For a simple theme, like the image above, `theme.json` should look something lik
 - The name element describes the theme name. This is also used as the folder name for the theme store.
 - The author element describes the theme author.
 - An optional field `"version": "v1.0"` can be added. If no version field is found, the version defaults to `v1.0`.
+- The manifest version tells the CSS Loader which version of `themes.json` you are using. The current version is `2`.
 - The inject tab is a dictionary of relative CSS file paths as keys, and a list of tabs you want the CSS to be injected into.
 - The target field describes what part of the UI your theme themes. This is only useful for submitting a theme. The following options are available, but more can be added through creating an issue:
     - System-Wide
@@ -82,6 +97,7 @@ A complex theme is a theme with patches. Patches are displayed as dropdown menus
     "version": "v1.2",
     "author": "SuchMeme",
     "target": "System-Wide",
+    "manifest_version": 2,
     "inject": {
         "shared.css": [
             "QuickAccess", "SP", "MainMenu"
@@ -90,28 +106,55 @@ A complex theme is a theme with patches. Patches are displayed as dropdown menus
     "patches": {
         "Theme Color": {
             "default": "Orange",
-            "Orange": {},
-            "Lime": {
-                "colors/lime.css": ["QuickAccess", "SP", "MainMenu"]
-            },
-            "Red": {
-                "colors/red.css": ["QuickAccess", "SP", "MainMenu"]
-            },
-            "Magenta": {
-                "colors/magenta.css": ["QuickAccess", "SP", "MainMenu"]
-            },
-            "Gradient RGB": {
-                "colors/gradient_rgb.css": ["QuickAccess", "SP", "MainMenu"]
-            },
-            "Gradient Deck": {
-                "colors/gradient_deck.css": ["QuickAccess", "SP", "MainMenu"]
+            "type": "dropdown",
+            "values": {
+                "Orange": {},
+                "Lime": {
+                    "colors/lime.css": ["QuickAccess", "SP", "MainMenu"]
+                },
+                "Red": {
+                    "colors/red.css": ["QuickAccess", "SP", "MainMenu"]
+                },
+                "Magenta": {
+                    "colors/magenta.css": ["QuickAccess", "SP", "MainMenu"]
+                },
+                "Gradient RGB": {
+                    "colors/gradient_rgb.css": ["QuickAccess", "SP", "MainMenu"]
+                },
+                "Gradient Deck": {
+                    "colors/gradient_deck.css": ["QuickAccess", "SP", "MainMenu"]
+                }
             }
         }
     }
 }
 ```
 
-- The patches section is a dictionary of patch names as key. The value is a dictionary where keys are it's options and their value is the applied CSS, similar to the "inject" section. The special key "default" is required to indicate a default option.
+> The patches section is a dictionary of patch names as key. The value is a dictionary where keys are it's options and their value is the applied CSS, similar to the "inject" section. The special key "default" is required to indicate a default option.
+
+Patches allow for choosing between a dropdown, a checkbox (toggle), or a slider for patch selection using the `type` field.
+
+#### Dropdown
+`"type": "dropdown"`
+
+This is the default value. This type gives a dropdown of all keys in the `values` dictionary. Choosing an option injects only the CSS specified within the selected value.
+
+![dropdown](images/Readme/dropdown.jpg)
+
+#### Slider
+`"type": "slider"`
+
+This type gives a slider with the labels of the points of all keys in the `values` dictionary. Choosing an option injects only the CSS specified within the selected value.
+
+![dropdown](images/Readme/slider.jpg)
+
+#### Checkbox (Toggle)
+`"type": "checkbox"`
+
+This type represents the `values` field as a toggle. This type is unique in the sense that it limits what options you can put in the `values` dictionary. You need to have a `Yes` and a `No` option in the `values` dictionary, otherwise the type falls back to a dropdown. When the toggle is on, `Yes` is selected, otherwise `No` is selected.
+
+![dropdown](images/Readme/checkbox.jpg)
+
 
 # Submitting a theme to the theme store
 
@@ -145,4 +188,10 @@ Here is an example `{AUTHOR}-{THEME_NAME}.json` file:
 ```
 
 # Support
-If you need any help creating or submitting a theme, [we have a Discord server where you can ask for help](https://discord.gg/aH9rsuP).
+If you need any help creating or submitting a theme, please use [the Steam Deck Homebrew Discord server](https://discord.gg/ZU74G2NJzk). Please use the CSS-Loader Support thread in the #support-plugins channel.
+
+## Upgrading a theme
+If you created a theme and would like to upgrade it to the latest manifest version, please follow this guide.
+
+### Upgrading from version 1
+To upgrade a version 1 `themes.json`, all options of a patch need to be put in a `values` dictionary, and a `manifest_version` field should be added to the root of the .json with value `2`. Please see [Making a theme compatible with the CSS loader](#making-a-theme-compatible-with-the-css-loader) for an example.
