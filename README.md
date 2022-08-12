@@ -4,9 +4,13 @@ A repo containing themes for [SDH-CssLoader](https://github.com/suchmememanyskil
 * [Making a theme for SDH-CssLoader](#making-a-theme-for-sdh-cssloader)
     * [Prerequisites](#prerequisites)
     * [Setting up the CEF debugger (Optional)](#setting-up-the-cef-debugger-optional)
+        * [Setup](#setup)
     * [Making a theme compatible with the CSS loader](#making-a-theme-compatible-with-the-css-loader)
+        * [Simple themes](#simple-themes)
+        * [Complex themes](#complex-themes)
 * [Submitting a theme to the theme store](#submitting-a-theme-to-the-theme-store)
 * [Support](#support)
+    * [Upgrading a theme](#upgrading-a-theme)
 
 # Making a theme for SDH-CssLoader
 ## Prerequisites
@@ -45,6 +49,7 @@ For a simple theme, like the image above, `theme.json` should look something lik
     "name": "Clean Gameview",
     "author": "SuchMeme",
     "target": "Library",
+    "manifest_version": 2,
     "inject": {
         "shared.css": ["SP"]
     }
@@ -54,6 +59,7 @@ For a simple theme, like the image above, `theme.json` should look something lik
 - The name element describes the theme name. This is also used as the folder name for the theme store.
 - The author element describes the theme author.
 - An optional field `"version": "v1.0"` can be added. If no version field is found, the version defaults to `v1.0`.
+- The manifest version tells the CSS Loader which version of `themes.json` you are using. The current version is `2`.
 - The inject tab is a dictionary of relative CSS file paths as keys, and a list of tabs you want the CSS to be injected into.
 - The target field describes what part of the UI your theme themes. This is only useful for submitting a theme. The following options are available, but more can be added through creating an issue:
     - System-Wide
@@ -75,48 +81,6 @@ For a simple theme, like the image above, `theme.json` should look something lik
 ![ComplexTheme](images/Readme/complextheme.png)
 
 A complex theme is a theme with patches. Patches are displayed as dropdown menus that apply additional CSS depending on the selection. The `theme.json` for a complex theme should look something like this:
-
-```json
-{
-    "name": "Colored Toggles",
-    "version": "v1.2",
-    "author": "SuchMeme",
-    "target": "System-Wide",
-    "inject": {
-        "shared.css": [
-            "QuickAccess", "SP", "MainMenu"
-        ] 
-    },
-    "patches": {
-        "Theme Color": {
-            "default": "Orange",
-            "Orange": {},
-            "Lime": {
-                "colors/lime.css": ["QuickAccess", "SP", "MainMenu"]
-            },
-            "Red": {
-                "colors/red.css": ["QuickAccess", "SP", "MainMenu"]
-            },
-            "Magenta": {
-                "colors/magenta.css": ["QuickAccess", "SP", "MainMenu"]
-            },
-            "Gradient RGB": {
-                "colors/gradient_rgb.css": ["QuickAccess", "SP", "MainMenu"]
-            },
-            "Gradient Deck": {
-                "colors/gradient_deck.css": ["QuickAccess", "SP", "MainMenu"]
-            }
-        }
-    }
-}
-```
-
-- The patches section is a dictionary of patch names as key. The value is a dictionary where keys are it's options and their value is the applied CSS, similar to the "inject" section. The special key "default" is required to indicate a default option.
-
-### V2 patches
-In v1.1.0 of the CssLoader, v2 patches were released. v2 patches allow for choosing between a dropdown, a checkbox(toggle), or a slider for patch selection. 
-
-To convert a v1 `themes.json` to a v2 `themes.json`, all options of a patch need to be put in a `"values"` dictionary, and a `manifest_version` should be added to the root of the .json with value `2`. See an example below of the complex theme example converted to v2:
 
 ```json
 {
@@ -157,23 +121,25 @@ To convert a v1 `themes.json` to a v2 `themes.json`, all options of a patch need
 }
 ```
 
-You can put a `type` field in a patch now to indicate how it should be displayed
+> The patches section is a dictionary of patch names as key. The value is a dictionary where keys are it's options and their value is the applied CSS, similar to the "inject" section. The special key "default" is required to indicate a default option.
 
-### Dropdown
+Patches allow for choosing between a dropdown, a checkbox (toggle), or a slider for patch selection using the `type` field.
+
+#### Dropdown
 `"type": "dropdown"`
 
 This is the default value, and the same dropdown as the v1 patches show. This type gives a dropdown of all keys in the `values` dictionary. Choosing an option injects only the css specified within the selected value
 
 ![dropdown](images/Readme/dropdown.jpg)
 
-### Slider
+#### Slider
 `"type": "slider"`
 
 This type gives a slider with the labels of the points of all keys in the `values` dictionary. Choosing an option injects only the css specified within the selected value
 
 ![dropdown](images/Readme/slider.jpg)
 
-### Checkbox
+#### Checkbox
 `"type": "checkbox"`
 
 This type represents the `values` field as a toggle. This type is unique in the sense that it limits what options you can put in the `values` dictionary. You need to have a `Yes` and a `No` option in the `values` dictionary, otherwise the type falls back to a dropdown. When the toggle is on, `Yes` is selected, otherwise `No` is selected.
@@ -214,3 +180,9 @@ Here is an example `{AUTHOR}-{THEME_NAME}.json` file:
 
 # Support
 If you need any help creating or submitting a theme, [we have a Discord server where you can ask for help](https://discord.gg/aH9rsuP).
+
+## Upgrading a theme
+If you created a theme and would like to upgrade it to the latest manifest version, please follow this guide.
+
+### Upgrading from version 1
+To upgrade a version 1 `themes.json`, all options of a patch need to be put in a `values` dictionary, and a `manifest_version` field should be added to the root of the .json with value `2`. Please see [Making a theme compatible with the CSS loader](#making-a-theme-compatible-with-the-css-loader) for an example.
