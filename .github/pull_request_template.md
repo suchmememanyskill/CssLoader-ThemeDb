@@ -4,7 +4,7 @@ Insert a link to the GitHub repository of the theme and describe the major chang
 
 ### Checklist
 
-Failure to complete this checklist or deleting boxes from the checklist will result in the closing of your pull request. Please write any comments regarding this checklist at the bottom of your pull request.
+Failure to complete this checklist or deleting boxes from the checklist will result in the closing of your pull request unless this is a theme update. Please write any comments regarding this checklist at the bottom of your pull request.
 
 Check every box.
 - [ ] I am the original author of this theme or have permission from the original author to make this pull request.
@@ -15,7 +15,7 @@ Check every box.
 - [ ] This theme is under 10MB in size and uses the least disk space possible.
 - [ ] This theme's preview image does not include text unless it is necessary to describe changes that can be made.
 - [ ] This theme is safe for work and does not contain any sexual, drug-related, or profane content.
-- [ ] This theme, if it uses css variables, prefixes said variables with a unique identifier
+- [ ] This theme prefixes any CSS variables with a unique identifier.
 
 Check one box.
 - [ ] I am not bundling a part of another theme with this theme to encourage mixing and matching themes.
