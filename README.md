@@ -179,7 +179,7 @@ Here is an example `{AUTHOR}-{THEME_NAME}.json` file:
 ```
 
 # Support
-If you need any help creating or submitting a theme, [there's the Decky loader discord server.](https://discord.gg/ZU74G2NJzk). In the server, see the `Css-Loader Support` thread in the `support-plugins` channel
+If you need any help creating or submitting a theme, please use [the Steam Deck Homebrew Discord server](https://discord.gg/ZU74G2NJzk). Please use the CSS-Loader Support thread in the #support-plugins channel.
 
 ## Upgrading a theme
 If you created a theme and would like to upgrade it to the latest manifest version, please follow this guide.
