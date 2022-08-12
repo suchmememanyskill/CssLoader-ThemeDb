@@ -4,7 +4,8 @@ A repo containing themes for [SDH-CssLoader](https://github.com/suchmememanyskil
 * [Making a theme for SDH-CssLoader](#making-a-theme-for-sdh-cssloader)
     * [Prerequisites](#prerequisites)
     * [Setting up the CEF debugger (Optional)](#setting-up-the-cef-debugger-optional)
-        * [Setup](#setup)
+        * [Recommended Setup](#recommended-setup)
+        * [Legacy Setup](#legacy-setup)
     * [Making a theme compatible with the CSS loader](#making-a-theme-compatible-with-the-css-loader)
         * [Simple themes](#simple-themes)
         * [Complex themes](#complex-themes)
@@ -28,9 +29,17 @@ The debugger allows you to access the multiple tabs that are used for the UI. A 
 - `QuickAccess` - The Quick Access overlay
 - `MainMenu` - The Steam menu overlay
 
-### Setup
+### Recommended Setup
 1. Open a Chromium-based browser (ex. Google Chrome, Microsoft Edge, Brave)
-2. Connect to `{DECK_IP}:8081` in the browser
+2. Go to the inspect page of your browser (ex. chrome://inspect, edge://inspect, brave://inspect)
+3. Under "Discover network targets", click "Configure", and enter "{DECK_IP}:8081"
+    - You can find the IP of your Steam Deck by going into your internet settings, selecting the current connected network, and looking at the `IP Address` field
+4. Wait a few seconds, and you will see multiple tabs appear under "Remote Target"
+    - After selecting a tab, you should be able to see the HTML and CSS used for that specific tab, like the screenshot above
+
+### Legacy Setup 
+1. Open a Chromium-based browser (ex. Google Chrome, Microsoft Edge, Brave)
+2. Connect to {DECK_IP}:8081 in the browser
     - You need to be on the same network as your Steam Deck
     - You can find the IP of your Steam Deck by going into your internet settings, selecting the current connected network, and looking at the `IP Address` field
 3. Select a tab
