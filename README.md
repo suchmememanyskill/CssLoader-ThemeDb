@@ -179,7 +179,7 @@ Here is an example `{AUTHOR}-{THEME_NAME}.json` file:
 ```
 
 # Support
-If you need any help creating or submitting a theme, [we have a Discord server where you can ask for help](https://discord.gg/aH9rsuP).
+If you need any help creating or submitting a theme, [there's the Decky loader discord server.](https://discord.gg/ZU74G2NJzk). In the server, see the `Css-Loader Support` thread in the `support-plugins` channel
 
 ## Upgrading a theme
 If you created a theme and would like to upgrade it to the latest manifest version, please follow this guide.
