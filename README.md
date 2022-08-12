@@ -128,18 +128,18 @@ Patches allow for choosing between a dropdown, a checkbox (toggle), or a slider 
 #### Dropdown
 `"type": "dropdown"`
 
-This is the default value, and the same dropdown as the v1 patches show. This type gives a dropdown of all keys in the `values` dictionary. Choosing an option injects only the css specified within the selected value
+This is the default value. This type gives a dropdown of all keys in the `values` dictionary. Choosing an option injects only the CSS specified within the selected value.
 
 ![dropdown](images/Readme/dropdown.jpg)
 
 #### Slider
 `"type": "slider"`
 
-This type gives a slider with the labels of the points of all keys in the `values` dictionary. Choosing an option injects only the css specified within the selected value
+This type gives a slider with the labels of the points of all keys in the `values` dictionary. Choosing an option injects only the CSS specified within the selected value.
 
 ![dropdown](images/Readme/slider.jpg)
 
-#### Checkbox
+#### Checkbox (Toggle)
 `"type": "checkbox"`
 
 This type represents the `values` field as a toggle. This type is unique in the sense that it limits what options you can put in the `values` dictionary. You need to have a `Yes` and a `No` option in the `values` dictionary, otherwise the type falls back to a dropdown. When the toggle is on, `Yes` is selected, otherwise `No` is selected.
