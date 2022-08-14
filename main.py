@@ -290,6 +290,21 @@ class Repo:
         if (self.target not in VALID_TARGETS):
             raise Exception(f"'{self.target}' is not a valid target!")
 
+        ignorePath = join(self.themePath, "ignore.json") if os.path.exists(join(self.themePath, "ignore.json")) else "ignore.json"
+
+        with open(ignorePath, "r") as fp:
+            data = json.load(fp)
+
+        if not isinstance(data, list):
+            raise Exception("Invalid ignore.json")
+
+        data.append("ignore.json")
+        
+        for x in data:
+            if os.path.exists(join(self.themePath, x)):
+                os.remove(join(self.themePath, x))
+                print(f"Removing {x} from theme")
+
         expectedFiles = [join(self.themePath, "theme.json")]
         
         if "inject" in self.json:
