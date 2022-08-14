@@ -59,6 +59,7 @@ For a simple theme, like the image above, `theme.json` should look something lik
     "author": "SuchMeme",
     "target": "Library",
     "manifest_version": 2,
+    "description": "this is an example description",
     "inject": {
         "shared.css": ["SP"]
     }
@@ -69,6 +70,7 @@ For a simple theme, like the image above, `theme.json` should look something lik
 - The author element describes the theme author.
 - An optional field `"version": "v1.0"` can be added. If no version field is found, the version defaults to `v1.0`.
 - The manifest version tells the CSS Loader which version of `themes.json` you are using. The current version is `2`.
+- An optional field `"description": ""` can be added to show a text description in the theme store.
 - The inject tab is a dictionary of relative CSS file paths as keys, and a list of tabs you want the CSS to be injected into.
 - The target field describes what part of the UI your theme themes. This is only useful for submitting a theme. The following options are available, but more can be added through creating an issue:
     - System-Wide
@@ -97,6 +99,7 @@ A complex theme is a theme with patches. Patches are displayed as dropdown menus
     "version": "v1.2",
     "author": "SuchMeme",
     "target": "System-Wide",
+    "description": "this is an example description",
     "manifest_version": 2,
     "inject": {
         "shared.css": [
