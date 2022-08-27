@@ -290,22 +290,25 @@ class Repo:
         if (self.target not in VALID_TARGETS):
             raise Exception(f"'{self.target}' is not a valid target!")
 
-        ignorePath = join(self.themePath, "ignore.json") if os.path.exists(join(self.themePath, "ignore.json")) else "ignore.json"
+        releasePath = join(self.themePath, "release.json") if os.path.exists(join(self.themePath, "release.json")) else "release.json"
 
-        with open(ignorePath, "r") as fp:
+        with open(releasePath, "r") as fp:
             data = json.load(fp)
 
-        if not isinstance(data, list):
+        if not isinstance(data, dict) and not "include" in data and not "ignore" in data:
             raise Exception("Invalid ignore.json")
 
-        data.append("ignore.json")
+        data["ignore"].append("release.json")
         
-        for x in data:
+        for x in data["ignore"]:
             if os.path.exists(join(self.themePath, x)):
                 os.remove(join(self.themePath, x))
                 print(f"Removing {x} from theme")
 
         expectedFiles = [join(self.themePath, "theme.json")]
+
+        for x in data["include"]:
+            expectedFiles.append(join(self.themePath, x))
         
         if "inject" in self.json:
             for x in self.json["inject"]:
@@ -315,7 +318,7 @@ class Repo:
                 if not x.endswith(".css"):
                     raise Exception(f"Inject contains a non-css file '{x}'!")
                 
-                print(f"{x} exists in theme")
+                # print(f"{x} exists in theme")
                 filePath = join(self.themePath, x)
                 if filePath not in expectedFiles:
                     expectedFiles.append(filePath)
@@ -327,7 +330,7 @@ class Repo:
                     raise Exception(f"Missing default on patch {x}")
                 
                 if "type" in patch:
-                    if patch["type"] not in ["dropdown", "checkbox", "slider"]:
+                    if patch["type"] not in ["dropdown", "checkbox", "slider", "none"]:
                         raise Exception(f"Type '{patch['type']}' is not a valid type!")
 
                 default = patch["default"]
@@ -357,7 +360,7 @@ class Repo:
                             if not z.endswith(".css"):
                                 raise Exception(f"Path '{x}' contains a non-css file '{z}'!")
 
-                            print(f"{z} exists in theme")
+                            # print(f"{z} exists in theme")
                             filePath = join(self.themePath, z)
                             if filePath not in expectedFiles:
                                 expectedFiles.append(filePath)
@@ -372,27 +375,37 @@ class Repo:
 
         if (os.name == "nt"):
             expectedFiles = [x.replace("/", "\\") for x in expectedFiles]
+            actualFiles = [x.replace("/", "\\") for x in actualFiles]
+
+        file_validation_fail = False
+
+        for x in expectedFiles:
+            if x in actualFiles:
+                print(f"[OK] {x[len(self.themePath):]}")
+            else:
+                print(f"[MISSING] {x[len(self.themePath):]}")
+                file_validation_fail = True
         
-        print(expectedFiles)
-        print(actualFiles)
+        for x in [x for x in actualFiles if x not in expectedFiles]:
+            print(f"[EXCESS] {x[len(self.themePath):]}")
+            file_validation_fail = True
+
+        if (file_validation_fail):
+            raise Exception("File validation failed")
 
         if (len(actualFiles) != len(expectedFiles)):
             raise Exception("Theme folder contains an unexpected amount of files!")
-
-        for x in actualFiles:
-            if x not in expectedFiles:
-                raise Exception(f"Theme folder contains file '{x}' that is not referenced in a theme!")
 
         totalSize = 0
         for x in expectedFiles:
             size = os.path.getsize(x)
             totalSize += size
-            print(f"{x} is {size} bytes")
+            # print(f"{x} is {size} bytes")
 
         print(f"Total theme size is {totalSize} bytes")
 
-        if (totalSize > 0xA00000): # 10 MB max per theme
-            raise Exception("Total theme size exceeds 10MB")
+        if (totalSize > 0x400000): # 4 MB max per theme
+            raise Exception("Total theme size exceeds 4MB")
 
 class DiscordWebhooks:
     def __init__(self):
