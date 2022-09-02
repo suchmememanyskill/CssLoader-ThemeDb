@@ -9,10 +9,17 @@ A repo containing themes for [SDH-CssLoader](https://github.com/suchmememanyskil
     * [Making a theme compatible with the CSS loader](#making-a-theme-compatible-with-the-css-loader)
         * [Simple themes](#simple-themes)
         * [Complex themes](#complex-themes)
+* [Additional features](#additional-features)
+    * [Theme Dependencies](#theme-dependencies)
+    * [Components](#components)
+        * [Color Picker](#color-picker)
+    * [Local Images](#local-images)
 * [Submitting a theme to the theme store](#submitting-a-theme-to-the-theme-store)
+    * [File management](#file-management)
 * [Support](#support)
     * [Upgrading a theme](#upgrading-a-theme)
-        * [Upgrading from version 1](#upgrading-from-version-1)
+        * [Upgrading from version 2 to version 3](#upgrading-from-version-2-to-version-3)
+        * [Upgrading from version 1 to version 2 or 3](#upgrading-from-version-1-to-version-2-or-3)
 
 # Making a theme for SDH-CssLoader
 ## Prerequisites
@@ -225,7 +232,7 @@ The color picker component injects a css variable with a user specified color.
 - `css_variable` refers to the name of the css variable that will be injected
 - `tabs` refers to what tabs the css variable will be injected into
 
-## Hosting images
+## Local Images
 
 [Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Background_Theme)
 
