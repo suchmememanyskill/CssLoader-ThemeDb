@@ -178,9 +178,9 @@ Displays only a little arrow with the patch name. For use with components
 
 [Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Dependency_Theme)
 
-Since CSSLoader v1.2.0, a small dependency system has been added. This is useful for example, if you want to bundle another theme or want to make small modifications to an existing theme. All dependencies get enabled alongside your theme.
+Since CSSLoader v1.2.0, a small dependency system has been added. This is useful for if you want to bundle another theme or want to make small modifications to an existing theme. All dependencies get enabled alongside your theme.
 
-In the themes.json file, specify a field called `"Dependencies"`. This is a dictionary of which the keys are the name of the theme you want to be dependencies, with their values being another dictionary. This dictionary's keys are the name of any patch this theme has, and the value the name of a value in the patch. If you don't want to modify any patch value, write `{}` as value
+In the themes.json file, specify a field called `"dependencies"`. This is a dictionary of which the keys are the name of the theme you want to be dependencies, with their values being another dictionary. This dictionary's keys are the name of any patch this theme has, and the value the name of a value in the patch. If you don't want to modify any patch value, write `{}` as value
 
 ```json
 "dependencies": {
@@ -218,7 +218,7 @@ The color picker component injects a css variable with a user specified color.
     }
 ]
 ```
-- `Name` refers to the of the component. This is shown to the user
+- `name` refers to the of the component. This is shown to the user
 - `type` refers to the type of component. For the color picker it's `color-picker`
 - `on` refers to what value the component should be displayed on
 - `default` refers to what default color the color picker should start out with. Only hex is supported, in 3,4,6 and 8 character variants
