@@ -9,16 +9,26 @@ A repo containing themes for [SDH-CssLoader](https://github.com/suchmememanyskil
     * [Making a theme compatible with the CSS loader](#making-a-theme-compatible-with-the-css-loader)
         * [Simple themes](#simple-themes)
         * [Complex themes](#complex-themes)
+* [Additional features](#additional-features)
+    * [Theme Dependencies](#theme-dependencies)
+    * [Components](#components)
+        * [Color Picker](#color-picker)
+    * [Local Images](#local-images)
 * [Submitting a theme to the theme store](#submitting-a-theme-to-the-theme-store)
+    * [File management](#file-management)
 * [Support](#support)
     * [Upgrading a theme](#upgrading-a-theme)
-        * [Upgrading from version 1](#upgrading-from-version-1)
+        * [Upgrading from version 2 to version 3](#upgrading-from-version-2-to-version-3)
+        * [Upgrading from version 1 to version 2 or 3](#upgrading-from-version-1-to-version-2-or-3)
 
 # Making a theme for SDH-CssLoader
 ## Prerequisites
 - Some experience in JSON and CSS
 - Installed the CSS loader
 - (Optional) Installed a Chromium-based browser
+
+## Templates
+[There is a sample/template repository available](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template). Feel free to use this to more easily create a theme by using the template.
 
 ## Setting up the CEF debugger (Optional)
 ![Debugger](images/Readme/Debugger.png)
@@ -53,6 +63,8 @@ Themes are folders with CSS files and a single `theme.json` inside. The `theme.j
 
 ### Simple themes
 ![SimpleTheme](images/Readme/simpletheme.png)
+
+[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Simple_Theme)
 
 For a simple theme, like the image above, `theme.json` should look something like this:
 
@@ -93,6 +105,8 @@ For a simple theme, like the image above, `theme.json` should look something lik
 
 ### Complex themes
 ![ComplexTheme](images/Readme/complextheme.png)
+
+[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Advanced_Theme)
 
 A complex theme is a theme with patches. Patches are displayed as dropdown menus that apply additional CSS depending on the selection. The `theme.json` for a complex theme should look something like this:
 
@@ -152,15 +166,77 @@ This is the default value. This type gives a dropdown of all keys in the `values
 
 This type gives a slider with the labels of the points of all keys in the `values` dictionary. Choosing an option injects only the CSS specified within the selected value.
 
-![dropdown](images/Readme/slider.jpg)
+![slider](images/Readme/slider.jpg)
 
 #### Checkbox (Toggle)
 `"type": "checkbox"`
 
 This type represents the `values` field as a toggle. This type is unique in the sense that it limits what options you can put in the `values` dictionary. You need to have a `Yes` and a `No` option in the `values` dictionary, otherwise the type falls back to a dropdown. When the toggle is on, `Yes` is selected, otherwise `No` is selected.
 
-![dropdown](images/Readme/checkbox.jpg)
+![checkbox](images/Readme/checkbox.jpg)
 
+#### None
+`"type": "none"`
+
+Displays only a little arrow with the patch name. For use with components
+
+# Additional features
+## Theme dependencies
+
+[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Dependency_Theme)
+
+Since CSSLoader v1.2.0, a small dependency system has been added. This is useful for if you want to bundle another theme or want to make small modifications to an existing theme. All dependencies get enabled alongside your theme.
+
+In the themes.json file, specify a field called `"dependencies"`. This is a dictionary of which the keys are the name of the theme you want to be dependencies, with their values being another dictionary. This dictionary's keys are the name of any patch this theme has, and the value the name of a value in the patch. If you don't want to modify any patch value, write `{}` as value
+
+```json
+"dependencies": {
+    "Switch Like Home": {
+        "No Friends": "Yes"
+    },
+    "Clean Gameview": {}
+}
+```
+> If a theme has a dependencies field like the one above, it will enable both Switch Like Home and Clean Gameview. Switch Like Home's 'No Friends' patch gets forced to 'Yes'
+
+## Components
+
+Components are a way to attach extra parts to a selectable patch option. For now, this only includes a color picker.
+
+Components are part of a patch. Inside a patch, you can make a `"components"` field (it's value is a list), and put the components inside
+
+### Color Picker
+
+![colorpicker](images/Readme/color-picker.jpg)
+
+[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Color_Picker_Theme)
+
+The color picker component injects a css variable with a user specified color.
+
+```json
+"components": [
+    {
+        "name": "Background Picker",
+        "type": "color-picker",
+        "on": "_",
+        "default": "#000",
+        "css_variable": "test-main-color",
+        "tabs": ["QuickAccess"]
+    }
+]
+```
+- `name` refers to the of the component. This is shown to the user
+- `type` refers to the type of component. For the color picker it's `color-picker`
+- `on` refers to what value the component should be displayed on
+- `default` refers to what default color the color picker should start out with. Only hex is supported, in 3,4,6 and 8 character variants
+- `css_variable` refers to the name of the css variable that will be injected
+- `tabs` refers to what tabs the css variable will be injected into
+
+## Local Images
+
+[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Background_Theme)
+
+Since CSSLoader v1.2.0, you can now access images locally from css. You can access images by using the following url: `/themes_custom/{your_theme_name}/{image_path}`
 
 # Submitting a theme to the theme store
 
@@ -193,11 +269,26 @@ Here is an example `{AUTHOR}-{THEME_NAME}.json` file:
 }
 ```
 
+## File management
+Sometimes, you want to ignore specific files or remove specific files before they get analyzed by the CI of the theme db. This is for example needed if you want to include images in your theme. You can create a file called 'release.json' in the same folder as your 'theme.json' of your theme. Inside, the file should be structured as follows
+
+```json
+{
+    "include": [],
+    "ignore": ["README.MD", "README.md", "Readme.md", "readme.md"]
+}
+```
+
+Any paths in the include field will be included in the theme. Any paths in the ignore field will be ignored.
+
 # Support
 If you need any help creating or submitting a theme, please use [the Steam Deck Homebrew Discord server](https://discord.gg/ZU74G2NJzk). Please use the CSS-Loader Support thread in the #support-plugins channel.
 
 ## Upgrading a theme
-If you created a theme and would like to upgrade it to the latest manifest version, please follow this guide.
+If you created a theme and would like to upgrade it to the latest manifest version, please follow this guide. The current highest manifest version is 3.
 
-### Upgrading from version 1
-To upgrade a version 1 `themes.json`, all options of a patch need to be put in a `values` dictionary, and a `manifest_version` field should be added to the root of the .json with value `2`. Please see [Making a theme compatible with the CSS loader](#making-a-theme-compatible-with-the-css-loader) for an example.
+### Upgrading from version 2 to version 3
+No breaking changes have been made. Just change `manifest_version` from a `2` to a `3` to update a theme to manifest level 3
+
+### Upgrading from version 1 to version 2 or 3
+To upgrade a version 1 `themes.json`, all options of a patch need to be put in a `values` dictionary, and a `manifest_version` field should be added to the root of the .json with value `2` (or `3`). Please see [Making a theme compatible with the CSS loader](#making-a-theme-compatible-with-the-css-loader) for an example.
