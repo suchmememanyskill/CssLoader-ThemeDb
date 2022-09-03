@@ -64,7 +64,7 @@ Themes are folders with CSS files and a single `theme.json` inside. The `theme.j
 ### Simple themes
 ![SimpleTheme](images/Readme/simpletheme.png)
 
-[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Simple_Theme)
+[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Sample%20Simple%20Theme)
 
 For a simple theme, like the image above, `theme.json` should look something like this:
 
@@ -106,7 +106,7 @@ For a simple theme, like the image above, `theme.json` should look something lik
 ### Complex themes
 ![ComplexTheme](images/Readme/complextheme.png)
 
-[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Advanced_Theme)
+[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Sample%20Advanced%20Theme)
 
 A complex theme is a theme with patches. Patches are displayed as dropdown menus that apply additional CSS depending on the selection. The `theme.json` for a complex theme should look something like this:
 
@@ -183,7 +183,7 @@ Displays only a little arrow with the patch name. For use with components
 # Additional features
 ## Theme dependencies
 
-[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Dependency_Theme)
+[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Sample%20Dependency%20Theme)
 
 Since CSSLoader v1.2.0, a small dependency system has been added. This is useful for if you want to bundle another theme or want to make small modifications to an existing theme. All dependencies get enabled alongside your theme.
 
@@ -209,7 +209,7 @@ Components are part of a patch. Inside a patch, you can make a `"components"` fi
 
 ![colorpicker](images/Readme/color-picker.jpg)
 
-[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Color_Picker_Theme)
+[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Sample%20Color%20Picker%20Theme)
 
 The color picker component injects a css variable with a user specified color.
 
@@ -234,7 +234,7 @@ The color picker component injects a css variable with a user specified color.
 
 ## Local Images
 
-[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Background_Theme)
+[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Sample%20Background%20Theme)
 
 Since CSSLoader v1.2.0, you can now access images locally from css. You can access images by using the following url: `/themes_custom/{your_theme_name}/{image_path}`
 
