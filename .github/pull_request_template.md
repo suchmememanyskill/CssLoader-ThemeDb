@@ -12,7 +12,7 @@ Check every box.
 - [ ] This theme's target has been marked appropriately and only styles said target.
 - [ ] This theme works properly on the latest versions of SteamOS for Steam Deck, [decky-loader](https://github.com/SteamDeckHomebrew/decky-loader) and [SDH-CssLoader](https://github.com/suchmememanyskill/SDH-CssLoader).
 - [ ] This theme only uses `*` or `!important` if absolutely necessary.
-- [ ] This theme is under 10MB in size and uses the least disk space possible.
+- [ ] This theme is under 4MB in size and uses the least disk space possible.
 - [ ] This theme's preview image does not include text unless it is necessary to describe changes that can be made.
 - [ ] This theme is safe for work and does not contain any sexual, drug-related, or profane content.
 - [ ] This theme prefixes any CSS variables with a unique identifier.
