@@ -100,6 +100,7 @@ For a simple theme, like the image above, `theme.json` should look something lik
     - Downloads
     - Settings
     - Lock Screen
+    - Tweak
     - Other
 
 

@@ -27,6 +27,7 @@ VALID_TARGETS = [
     "Downloads",
     "Settings",
     "Lock Screen",
+    "Tweak",
     "Other",
 ]
 
