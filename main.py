@@ -27,6 +27,7 @@ VALID_TARGETS = [
     "Downloads",
     "Settings",
     "Lock Screen",
+    "Tweak",
     "Other",
 ]
 
@@ -93,6 +94,13 @@ class MegaJson():
             if (themeId == x["id"]):
                 return x
         return None
+    
+    def doesThemeExist(self, themeName : str) -> bool:
+        for x in self.megaJson:
+            if (themeName == x["name"]):
+                return True
+        
+        return False
 
 
 print("Getting megajson...")
@@ -211,24 +219,30 @@ class Repo:
     
     def get(self):
         tempDir = tempfile.TemporaryDirectory()
-        print(f"Cloning {self.repoReference.repoUrl} into {tempDir.name}...")
-        subprocess.run([
-            "git",
-            "clone",
-            self.repoReference.repoUrl,
-            tempDir.name
-        ], check=True)
+        print(tempDir.name)
+        if self.repoReference.repoUrl != "LOCAL":
+            print(f"Cloning {self.repoReference.repoUrl} into {tempDir.name}...")
+            subprocess.run([
+                "git",
+                "clone",
+                self.repoReference.repoUrl,
+                tempDir.name
+            ], check=True)
 
-        subprocess.run([
-            "git",
-            "-C",
-            tempDir.name,
-            "reset",
-            "--hard",
-            self.repoReference.repoCommit
-        ], check=True)
+            subprocess.run([
+                "git",
+                "-C",
+                tempDir.name,
+                "reset",
+                "--hard",
+                self.repoReference.repoCommit
+            ], check=True)
 
-        self.themePath = join(tempDir.name, self.repoReference.repoSubpath)
+            self.themePath = join(tempDir.name, self.repoReference.repoSubpath)
+        else:
+            shutil.copytree(self.repoReference.repoSubpath, join(tempDir.name, "theme"))
+            self.themePath = join(tempDir.name, "theme")
+        
         themeDataPath = join(self.themePath, "theme.json")
 
         if not os.path.exists(themeDataPath):
@@ -290,23 +304,35 @@ class Repo:
         if (self.target not in VALID_TARGETS):
             raise Exception(f"'{self.target}' is not a valid target!")
 
-        ignorePath = join(self.themePath, "ignore.json") if os.path.exists(join(self.themePath, "ignore.json")) else "ignore.json"
+        releasePath = join(self.themePath, "release.json") if os.path.exists(join(self.themePath, "release.json")) else "release.json"
 
-        with open(ignorePath, "r") as fp:
+        with open(releasePath, "r") as fp:
             data = json.load(fp)
 
-        if not isinstance(data, list):
+        if not isinstance(data, dict) and not "include" in data and not "ignore" in data:
             raise Exception("Invalid ignore.json")
 
-        data.append("ignore.json")
+        data["ignore"].append("release.json")
         
-        for x in data:
+        for x in data["ignore"]:
             if os.path.exists(join(self.themePath, x)):
                 os.remove(join(self.themePath, x))
                 print(f"Removing {x} from theme")
 
         expectedFiles = [join(self.themePath, "theme.json")]
+
+        for x in data["include"]:
+            expectedFiles.append(join(self.themePath, x))
         
+        if "dependencies" in self.json:
+            if self.manifestVersion < 3: # Dependencies got introduced in manifest v3
+                raise Exception("A v3+ Patch was detected but a v2 or v1 manifest was provided")
+
+            for x in self.json["dependencies"]:
+                if not megaJson.doesThemeExist(x):
+                    raise Exception("Theme dependency does not exist on the themedb")
+
+
         if "inject" in self.json:
             for x in self.json["inject"]:
                 if not os.path.exists(join(self.themePath, x)):
@@ -315,7 +341,7 @@ class Repo:
                 if not x.endswith(".css"):
                     raise Exception(f"Inject contains a non-css file '{x}'!")
                 
-                print(f"{x} exists in theme")
+                # print(f"{x} exists in theme")
                 filePath = join(self.themePath, x)
                 if filePath not in expectedFiles:
                     expectedFiles.append(filePath)
@@ -323,27 +349,32 @@ class Repo:
         if "patches" in self.json:
             for x in self.json["patches"]:
                 patch = self.json["patches"][x]
-                if "default" not in patch:
+                if "default" not in patch and self.manifestVersion < 3: # Default is only required on pre-3 manifest
                     raise Exception(f"Missing default on patch {x}")
                 
                 if "type" in patch:
-                    if patch["type"] not in ["dropdown", "checkbox", "slider"]:
+                    if patch["type"] not in ["dropdown", "checkbox", "slider", "none"]:
                         raise Exception(f"Type '{patch['type']}' is not a valid type!")
 
-                default = patch["default"]
+
                 values = None
 
                 if "values" in patch: # V2 patch
                     if self.manifestVersion < 2: # Manifest version needs to be set to 2 or above to support v2 patches
-                        raise Exception("A v2 Patch was detected but a v1 manifest was provided")
+                        raise Exception("A v2+ Patch was detected but a v1 manifest was provided")
 
                     values = patch["values"]
                 else: # V1 patch
                     if self.manifestVersion > 1: # Manifest version needs to be set to 1 or below to support v1 patches
-                        raise Exception("A v1 patch was detected but a v2 manifest was provided")
+                        raise Exception("A v1 patch was detected but a v2+ manifest was provided")
 
                     values = patch
                     del patch["default"]
+                
+                if "default" not in patch:
+                    default = list(values.keys())[0]
+                else:
+                    default = patch["default"]
 
                 if default not in values:
                     raise Exception("Default does not exist")
@@ -357,12 +388,33 @@ class Repo:
                             if not z.endswith(".css"):
                                 raise Exception(f"Path '{x}' contains a non-css file '{z}'!")
 
-                            print(f"{z} exists in theme")
+                            # print(f"{z} exists in theme")
                             filePath = join(self.themePath, z)
                             if filePath not in expectedFiles:
                                 expectedFiles.append(filePath)
                     else:
                         raise Exception(f"Non-dictionary in values of patch '{x}'")
+                
+                if "components" in patch:
+                    if self.manifestVersion < 3: # Components got introduced in manifest v3
+                        raise Exception("A v3+ Patch was detected but a v2 or v1 manifest was provided")
+                    
+                    if not isinstance(patch["components"], list):
+                        raise Exception("Components is not a list??")
+
+                    for z in patch["components"]:
+                        items = ["name", "type", "on", "default", "css_variable", "tabs"]
+
+                        for i in items:
+                           if i not in z:
+                               raise Exception(f"Field {y} not found in component of '{x}'")
+
+                        if (z["type"] not in ["color-picker"]):
+                            raise Exception(f"Component type {z['type']} not found")
+                        
+                        if (z["on"] not in values):
+                            raise Exception(f"{z['on']} value was not found in patch")
+
         
         actualFiles = []
 
@@ -372,27 +424,37 @@ class Repo:
 
         if (os.name == "nt"):
             expectedFiles = [x.replace("/", "\\") for x in expectedFiles]
+            actualFiles = [x.replace("/", "\\") for x in actualFiles]
+
+        file_validation_fail = False
+
+        for x in expectedFiles:
+            if x in actualFiles:
+                print(f"[OK] {x[len(self.themePath):]}")
+            else:
+                print(f"[MISSING] {x[len(self.themePath):]}")
+                file_validation_fail = True
         
-        print(expectedFiles)
-        print(actualFiles)
+        for x in [x for x in actualFiles if x not in expectedFiles]:
+            print(f"[EXCESS] {x[len(self.themePath):]}")
+            file_validation_fail = True
+
+        if (file_validation_fail):
+            raise Exception("File validation failed")
 
         if (len(actualFiles) != len(expectedFiles)):
             raise Exception("Theme folder contains an unexpected amount of files!")
-
-        for x in actualFiles:
-            if x not in expectedFiles:
-                raise Exception(f"Theme folder contains file '{x}' that is not referenced in a theme!")
 
         totalSize = 0
         for x in expectedFiles:
             size = os.path.getsize(x)
             totalSize += size
-            print(f"{x} is {size} bytes")
+            # print(f"{x} is {size} bytes")
 
         print(f"Total theme size is {totalSize} bytes")
 
-        if (totalSize > 0xA00000): # 10 MB max per theme
-            raise Exception("Total theme size exceeds 10MB")
+        if (totalSize > 0x400000): # 4 MB max per theme
+            raise Exception("Total theme size exceeds 4MB")
 
 class DiscordWebhooks:
     def __init__(self):
