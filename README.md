@@ -122,7 +122,7 @@ A complex theme is a theme with patches. Patches are displayed as dropdown menus
     "inject": {
         "shared.css": [
             "QuickAccess", "SP", "MainMenu"
-        ] 
+        ]
     },
     "patches": {
         "Theme Color": {

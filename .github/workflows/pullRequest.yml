@@ -22,13 +22,13 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-      
+
       - name: Install requirements
         run: pip install -r requirements.txt
 
       - name: Build themes.json
         run: python3 main.py
-      
+
       - uses: actions/upload-artifact@v3
         with:
           name: Generated Theme Zips
