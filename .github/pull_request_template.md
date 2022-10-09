@@ -1,4 +1,4 @@
-# Pretendo Theme
+# Insert Theme Name(s) Here
 
 Insert a link to the GitHub repository of the theme and describe the major changes your theme makes here.
 
