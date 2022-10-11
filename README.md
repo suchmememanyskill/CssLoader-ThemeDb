@@ -18,8 +18,9 @@ A repo containing themes for [SDH-CssLoader](https://github.com/suchmememanyskil
     * [File management](#file-management)
 * [Support](#support)
     * [Upgrading a theme](#upgrading-a-theme)
+        * [Upgrading from version 3 to version 4](#upgrading-from-version-3-to-version-4)
         * [Upgrading from version 2 to version 3](#upgrading-from-version-2-to-version-3)
-        * [Upgrading from version 1 to version 2 or 3](#upgrading-from-version-1-to-version-2-or-3)
+        * [Upgrading from version 1 to version 2, 3 or 4](#upgrading-from-version-1-to-version-2-3-or-4)
 
 # Making a theme for SDH-CssLoader
 ## Prerequisites
@@ -84,7 +85,7 @@ For a simple theme, like the image above, `theme.json` should look something lik
 - The name element describes the theme name. This is also used as the folder name for the theme store.
 - The author element describes the theme author.
 - An optional field `"version": "v1.0"` can be added. If no version field is found, the version defaults to `v1.0`.
-- The manifest version tells the CSS Loader which version of `themes.json` you are using. The current version is `3`.
+- The manifest version tells the CSS Loader which version of `themes.json` you are using. The current version is `4`.
 - An optional field `"description": ""` can be added to show a text description in the theme store.
 - The inject tab is a dictionary of relative CSS file paths as keys, and a list of tabs you want the CSS to be injected into.
 - The target field describes what part of the UI your theme themes. This is only useful for submitting a theme. The following options are available, but more can be added through creating an issue:
@@ -202,7 +203,7 @@ In the themes.json file, specify a field called `"dependencies"`. This is a dict
 
 ## Components
 
-Components are a way to attach extra parts to a selectable patch option. For now, this only includes a color picker.
+Components are a way to attach extra parts to a selectable patch option.
 
 Components are part of a patch. Inside a patch, you can make a `"components"` field (it's value is a list), and put the components inside
 
@@ -228,8 +229,35 @@ The color picker component injects a css variable with a user specified color.
 ```
 - `name` refers to the of the component. This is shown to the user
 - `type` refers to the type of component. For the color picker it's `color-picker`
-- `on` refers to what value the component should be displayed on
+- `on` refers to what patch value the component should be displayed on
 - `default` refers to what default color the color picker should start out with. Only hex is supported, in 3,4,6 and 8 character variants
+- `css_variable` refers to the name of the css variable that will be injected
+- `tabs` refers to what tabs the css variable will be injected into
+
+### Image Picker
+
+![imagepicker](images/Readme/image-picker.jpg)
+
+[Example](https://github.com/suchmememanyskill/Steam-Deck-Themes/tree/main/static-background)
+
+The image picker component injects a user supplied file, using a file picker, as `url(path/to/file)` as a css variable. Only images from `~/homebrew/themes` can be selected
+
+```json
+"components": [
+    {
+        "name": "Image Picker",
+        "type": "image-picker",
+        "on": "_",
+        "default": "ThemeName/background.jpg",
+        "css_variable": "test-main-image",
+        "tabs": ["SP"]
+    }
+]
+```
+- `name` refers to the of the component. This is shown to the user
+- `type` refers to the type of component. For the color picker it's `image-picker`
+- `on` refers to what patch value the component should be displayed on
+- `default` refers to what default image path the image picker should start out with. The supplied relative path starts in `~/homebrew/themes`
 - `css_variable` refers to the name of the css variable that will be injected
 - `tabs` refers to what tabs the css variable will be injected into
 
@@ -286,10 +314,13 @@ Any paths in the include field will be included in the theme. Any paths in the i
 If you need any help creating or submitting a theme, please use [the Steam Deck Homebrew Discord server](https://discord.gg/ZU74G2NJzk). Please use the CSS-Loader Support thread in the #support-plugins channel.
 
 ## Upgrading a theme
-If you created a theme and would like to upgrade it to the latest manifest version, please follow this guide. The current highest manifest version is 3.
+If you created a theme and would like to upgrade it to the latest manifest version, please follow this guide. The current highest manifest version is 4.
+
+### Upgrading from version 3 to version 4
+No breaking changes have been made. Just change `manifest_version` from a `3` to a `4` to update a theme to manifest level 4
 
 ### Upgrading from version 2 to version 3
 No breaking changes have been made. Just change `manifest_version` from a `2` to a `3` to update a theme to manifest level 3
 
-### Upgrading from version 1 to version 2 or 3
-To upgrade a version 1 `themes.json`, all options of a patch need to be put in a `values` dictionary, and a `manifest_version` field should be added to the root of the .json with value `2` (or `3`). Please see [Making a theme compatible with the CSS loader](#making-a-theme-compatible-with-the-css-loader) for an example.
+### Upgrading from version 1 to version 2, 3 or 4
+To upgrade a version 1 `themes.json`, all options of a patch need to be put in a `values` dictionary, and a `manifest_version` field should be added to the root of the .json with value `2` (or `3`/`4`). Please see [Making a theme compatible with the CSS loader](#making-a-theme-compatible-with-the-css-loader) for an example.

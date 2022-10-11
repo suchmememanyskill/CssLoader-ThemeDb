@@ -409,7 +409,9 @@ class Repo:
                            if i not in z:
                                raise Exception(f"Field {y} not found in component of '{x}'")
 
-                        if (z["type"] not in ["color-picker"]):
+                        valid_types = ["color-picker", "image-picker"] if self.manifestVersion >= 4 else ["color-picker"]
+
+                        if (z["type"] not in valid_types):
                             raise Exception(f"Component type {z['type']} not found")
                         
                         if (z["on"] not in values):
