@@ -308,7 +308,7 @@ Here is an example `{AUTHOR}-{THEME_NAME}.json` file:
 2. Go over to the channel `#css-submission-accept`
 3. Read trough and accept the terms. After accepting the terms, a new channel called `#css-submissions-bot` will appear. Go into this channel
 4. Type `/css submit`, and fill in all applicable fields
-    - The `theme` fields accepts a zip file. This zip file should contain the theme at the root level (theme.json is visible when you open the zip). Also, a `thumbnail.jpg` image file should exist on the root level of the zip, which is used as the preview of the theme.
+    - The `theme` field accepts a zip file. This zip file should contain the theme at the root level (theme.json is visible when you open the zip). Also, a `thumbnail.jpg` image file should exist on the root level of the zip, which is used as the preview of the theme.
     - The bot verifies your theme before submission
     - Updates should be supported, by uploading the same theme with the same discord account you uploaded a theme previously with using the bot
     - If any issues come up, please mention `Such Meme, Many Skill#2921` in the `#css-submissions-bot` channel
