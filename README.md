@@ -269,6 +269,11 @@ Since CSSLoader v1.2.0, you can now access images locally from css. You can acce
 
 # Submitting a theme to the theme store
 
+## Submission
+There are 2 ways to submit a theme, by either submitting it via github directly to this repository, or by uploading a zip to a discord bot
+
+### Github
+
 A pull request to this repository has a specific template to adhere to. Please make sure your theme adheres to [these requirements](https://github.com/EMERALD0874/CssLoader-ThemeDb/blob/main/.github/pull_request_template.md).
 
 1. Fork this repository
@@ -297,6 +302,18 @@ Here is an example `{AUTHOR}-{THEME_NAME}.json` file:
     "preview_image_path": "images/SuchMeme/Clean Gameview.jpg"
 }
 ```
+
+## Discord (Experimental)
+1. [Join SuchMemeManySkill's Development Discord Server](https://discord.gg/aH9rsuP)
+2. Go over to the channel `#css-submission-accept`
+3. Read trough and accept the terms. After accepting the terms, a new channel called `#css-submissions-bot` will appear. Go into this channel
+4. Type `/css submit`, and fill in all applicable fields
+    - The `theme` field accepts a zip file. This zip file should contain the theme at the root level (theme.json is visible when you open the zip). Also, a `thumbnail.jpg` image file should exist on the root level of the zip, which is used as the preview of the theme.
+    - The bot verifies your theme before submission
+    - Updates should be supported, by uploading the same theme with the same discord account you uploaded a theme previously with using the bot
+    - If any issues come up, please mention `Such Meme, Many Skill#2921` in the `#css-submissions-bot` channel
+
+This will make a github pull request, so it can be reviewed by the CSS_Loader team the same way as other submissions. 
 
 ## File management
 Sometimes, you want to ignore specific files or remove specific files before they get analyzed by the CI of the theme db. This is for example needed if you want to include images in your theme. You can create a file called 'release.json' in the same folder as your 'theme.json' of your theme. Inside, the file should be structured as follows
