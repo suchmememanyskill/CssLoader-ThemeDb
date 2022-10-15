@@ -1,0 +1,4 @@
+{
+    "include": [],
+    "ignore": ["README.MD", "README.md", "Readme.md", "readme.md"]
+}
