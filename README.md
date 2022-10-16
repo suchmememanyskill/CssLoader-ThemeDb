@@ -1,6 +1,17 @@
-# CSS Loader - Theme Database
-
-A repo containing themes for [SDH-CssLoader](https://github.com/suchmememanyskill/SDH-CssLoader), a CSS loader for the Steam Deck.
+<h1 align="center">
+  <img src="./images/Readme/logo.png#gh-light-mode-only" alt="CSS Loader logo, based on paint-roller from Font Awesome" width="200"><img src="./images/Readme/logo_white.png#gh-dark-mode-only" alt="CSS Loader logo, based on paint-roller from Font Awesome" width="200">
+  <br>
+  CSS Loader - Theme Database
+</h1>
+<p align="center">
+  <a href="https://github.com/suchmememanyskill/SDH-CssLoader/stargazers"><img src="https://img.shields.io/github/stars/suchmememanyskill/SDH-CssLoader" /></a>
+  <a href="https://github.com/suchmememanyskill/SDH-CssLoader/commits/main"><img src="https://img.shields.io/github/last-commit/suchmememanyskill/SDH-CssLoader.svg" /></a>
+  <a href="https://github.com/suchmememanyskill/SDH-CssLoader/blob/main/LICENSE"><img src="https://img.shields.io/github/license/suchmememanyskill/SDH-CssLoader" /></a>
+  <a href="https://discord.gg/ZU74G2NJzk"><img src="https://img.shields.io/discord/960281551428522045?color=%235865F2&label=discord" /></a>
+  <br>
+  <br>
+  <img src="./images/EMERALD/Phantom.jpg" alt="CSS Loader screenshot with Phantom and Obsidian" width="80%">
+</p>
 
 # Making a theme for SDH-CssLoader
 
