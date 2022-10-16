@@ -13,55 +13,56 @@
   <img src="./images/EMERALD/Phantom.jpg" alt="CSS Loader screenshot with Phantom and Obsidian" width="80%">
 </p>
 
-# Making a theme for SDH-CssLoader
+## 🎨 Creating a Theme
 
-## Prerequisites
+Development for the CSS Loader is intended to be as simple as possible. That being said, we understand not everyone understands how to edit CSS files. If you have any suggestions for how we can make this guide easier to understand, please feel free to create an issue.
 
-- Some experience in JSON and CSS
-- Installed the CSS loader
+### 📋 Prerequisites
+
+- Some experience in CSS and JSON
+- Installed the CSS Loader
 - (Optional) Installed a Chromium-based browser
 
-## Templates
+### 📂 Template
 
-[There is a sample/template repository available](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template). Feel free to use this to more easily create a theme by using the template.
+There is [a template repository](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template) you can use for creating your first theme.
 
-## Setting up the CEF debugger (Optional)
+### 🌐 CEF Debugger (Optional)
 
 ![Debugger](images/Readme/Debugger.png)
 
-The CEF debugger is very useful for creating themes, as it allows you to play around directly with the style of the Steam Deck UI.
+The Chromium Embedded Framework (CEF) debugger is very useful for creating themes, as it allows you to play around directly with the style of the Steam Deck UI.
 
-The debugger allows you to access the multiple tabs that are used for the UI. A few common ones are:
+The debugger allows you to access tabs that are used for the UI. A few common ones are:
 
 - `SP` - The main UI of the Steam Deck
 - `QuickAccess` - The Quick Access overlay
 - `MainMenu` - The Steam menu overlay
 
-### Recommended setup
+#### 🧰 Recommended Setup
 
 1. Turn on the "Allow Remote CEF Debugging" setting in the Decky settings.
-1. Open a Chromium-based browser (ex. Google Chrome, Microsoft Edge, Brave)
-1. Go to the inspect page of your browser (ex. chrome://inspect, edge://inspect, brave://inspect)
-1. Under "Discover network targets", click "Configure", and enter "{DECK_IP}:8081"
-   - You can find the IP of your Steam Deck by going into your internet settings, selecting the current connected network, and looking at the `IP Address` field
+1. Open a Chromium-based browser (ex. Google Chrome, Microsoft Edge, Brave).
+1. Go to the inspect page of your browser (ex. chrome://inspect, edge://inspect, brave://inspect).
+1. Under "Discover network targets", click "Configure", and enter "{DECK_IP}:8081".
+   - You need to be on the same network as your Steam Deck.
+   - You can find the IP of your Steam Deck by going into your internet settings, selecting the currently connected network, and looking at the "IP Address" field.
 1. Wait a few seconds, and you will see multiple tabs appear under "Remote Target"
-   - After selecting a tab, you should be able to see the HTML and CSS used for that specific tab, like the screenshot above
+   - After selecting a tab, you should be able to see the HTML and CSS used for that specific tab, like the screenshot above.
 
-### Legacy setup
+#### 🧰 Legacy Setup
 
 1. Turn on the "Allow Remote CEF Debugging" setting in the Decky settings.
-1. Open a Chromium-based browser (ex. Google Chrome, Microsoft Edge, Brave)
-1. Connect to {DECK_IP}:8081 in the browser
-   - You need to be on the same network as your Steam Deck
-   - You can find the IP of your Steam Deck by going into your internet settings, selecting the current connected network, and looking at the `IP Address` field
-1. Select a tab
-   - After selecting a tab, you should be able to see the HTML and CSS used for that specific tab, like the screenshot above
+1. Open a Chromium-based browser (ex. Google Chrome, Microsoft Edge, Brave).
+1. Enter "{DECK_IP}:8081" in the browser.
+   - You need to be on the same network as your Steam Deck.
+   - You can find the IP of your Steam Deck by going into your internet settings, selecting the currently connected network, and looking at the "IP Address" field.
+1. Select a tab.
+   - After selecting a tab, you should be able to see the HTML and CSS used for that specific tab, like the screenshot above.
 
-## Making a theme compatible with the CSS loader
+### 🖌️ Simple Themes
 
 Themes are folders with CSS files and a single `theme.json` inside. The `theme.json` determines how everything will be displayed, and any dropdown options if the theme has them. The CSS loader loads themes from `/home/deck/homebrew/themes`.
-
-### Simple themes
 
 ![SimpleTheme](images/Readme/simpletheme.png)
 
@@ -86,9 +87,9 @@ For a simple theme, like the image above, `theme.json` should look something lik
 - The author element describes the theme author.
 - An optional field `"version": "v1.0"` can be added. If no version field is found, the version defaults to `v1.0`.
 - The manifest version tells the CSS Loader which version of `themes.json` you are using. The current version is `4`.
-- An optional field `"description": ""` can be added to show a text description in the theme store.
+- An optional field `"description": "This theme changes..."` can be added to show a text description in the theme store.
 - The inject tab is a dictionary of relative CSS file paths as keys, and a list of tabs you want the CSS to be injected into.
-- The target field describes what part of the UI your theme themes. This is only useful for submitting a theme. The following options are available, but more can be added through creating an issue:
+- The target field describes what part of the UI your theme themes. This is only useful for submitting a theme. The following options are available, but more can be added by creating an issue:
   - System-Wide
   - Background
   - Keyboard
@@ -104,7 +105,7 @@ For a simple theme, like the image above, `theme.json` should look something lik
   - Tweak
   - Other
 
-### Complex themes
+### 🖼️ Complex Themes
 
 ![ComplexTheme](images/Readme/complextheme.png)
 
@@ -154,7 +155,7 @@ A complex theme is a theme with patches. Patches are displayed as dropdown menus
 
 Patches allow for choosing between a dropdown, a checkbox (toggle), or a slider for patch selection using the `type` field.
 
-#### Dropdown
+#### 🔽 Dropdown
 
 `"type": "dropdown"`
 
@@ -162,7 +163,7 @@ This is the default value. This type gives a dropdown of all keys in the `values
 
 ![dropdown](images/Readme/dropdown.jpg)
 
-#### Slider
+#### 🎚️ Slider
 
 `"type": "slider"`
 
@@ -170,29 +171,35 @@ This type gives a slider with the labels of the points of all keys in the `value
 
 ![slider](images/Readme/slider.jpg)
 
-#### Checkbox (Toggle)
+#### ✅ Checkbox (Toggle)
 
 `"type": "checkbox"`
 
-This type represents the `values` field as a toggle. This type is unique in the sense that it limits what options you can put in the `values` dictionary. You need to have a `Yes` and a `No` option in the `values` dictionary, otherwise the type falls back to a dropdown. When the toggle is on, `Yes` is selected, otherwise `No` is selected.
+This type represents the `values` field as a toggle. This type is unique in the sense that it limits what options you can put in the `values` dictionary. You need to have a `Yes` and a `No` option in the `values` dictionary, otherwise, the type falls back to a dropdown. When the toggle is on, `Yes` is selected, otherwise, `No` is selected.
 
 ![checkbox](images/Readme/checkbox.jpg)
 
-#### None
+#### 🚫 None
 
 `"type": "none"`
 
-Displays only a little arrow with the patch name. For use with components
+Displays an arrow with the patch name. Has no functional use. For use with components.
 
-# Additional features
+### ➕ Additional Features
 
-## Theme dependencies
+#### 📁 Local Files
+
+[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Sample%20Background%20Theme)
+
+Since CSSLoader v1.2.0, you can now access files locally from CSS. You can access images by using the following URL: `/themes_custom/{your_theme_name}/{image_path}`
+
+#### 📦 Adding Dependencies
 
 [Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Sample%20Dependency%20Theme)
 
-Since CSSLoader v1.2.0, a small dependency system has been added. This is useful for if you want to bundle another theme or want to make small modifications to an existing theme. All dependencies get enabled alongside your theme.
+Since CSSLoader v1.2.0, a small dependency system has been added. This is useful if you want to bundle another theme or want to make small modifications to an existing theme. All dependencies get enabled alongside your theme.
 
-In the themes.json file, specify a field called `"dependencies"`. This is a dictionary of which the keys are the name of the theme you want to be dependencies, with their values being another dictionary. This dictionary's keys are the name of any patch this theme has, and the value the name of a value in the patch. If you don't want to modify any patch value, write `{}` as value
+In the themes.json file, specify a field called `"dependencies"`. This is a dictionary in which the keys are the name of the theme you want to be dependencies, with their values being another dictionary. This dictionary's keys are the name of any patch this theme has, and the value is the name of a value in the patch. If you don't want to modify any patch value, write `{}` as the value.
 
 ```json
 "dependencies": {
@@ -203,21 +210,21 @@ In the themes.json file, specify a field called `"dependencies"`. This is a dict
 }
 ```
 
-> If a theme has a dependencies field like the one above, it will enable both Switch Like Home and Clean Gameview. Switch Like Home's 'No Friends' patch gets forced to 'Yes'
+> If a theme has a dependencies field like the one above, it will enable both Switch Like Home and Clean Gameview. Switch Like Home's 'No Friends' patch gets forced to 'Yes'.
 
-## Components
+#### 🗃️ Components
 
 Components are a way to attach extra parts to a selectable patch option.
 
-Components are part of a patch. Inside a patch, you can make a `"components"` field (it's value is a list), and put the components inside
+Components are part of a patch. Inside a patch, you can make a `"components"` field (its value is a list), and put the components inside.
 
-### Color Picker
+##### 🎨 Color Picker
 
-![colorpicker](images/Readme/color-picker.jpg)
+![Color picker](images/Readme/color-picker.jpg)
 
 [Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Sample%20Color%20Picker%20Theme)
 
-The color picker component injects a css variable with a user specified color.
+The color picker component injects a CSS variable with a user-specified color.
 
 ```json
 "components": [
@@ -239,7 +246,7 @@ The color picker component injects a css variable with a user specified color.
 - `css_variable` refers to the name of the css variable that will be injected
 - `tabs` refers to what tabs the css variable will be injected into
 
-### Image Picker
+##### 📷 Image Picker
 
 ![imagepicker](images/Readme/image-picker.jpg)
 
@@ -260,39 +267,34 @@ The image picker component injects a user supplied file, using a file picker, as
 ]
 ```
 
-- `name` refers to the of the component. This is shown to the user
-- `type` refers to the type of component. For the color picker it's `image-picker`
+- `name` refers to the name of the component. This is shown to the user
+- `type` refers to the type of component. For the color picker, it's `image-picker`
 - `on` refers to what patch value the component should be displayed on
 - `default` refers to what default image path the image picker should start out with. The supplied relative path starts in `~/homebrew/themes`
-- `css_variable` refers to the name of the css variable that will be injected
-- `tabs` refers to what tabs the css variable will be injected into
+- `css_variable` refers to the name of the CSS variable that will be injected
+- `tabs` refers to what tabs the CSS variable will be injected into
 
-## Local Images
+## 📨 Uploading a Theme
 
-[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Sample%20Background%20Theme)
+A pull request to this repository has a specific template to adhere to. Please make sure your theme adheres to [these requirements](https://github.com/suchmememanyskill/CssLoader-ThemeDb/blob/main/.github/pull_request_template.md).
 
-Since CSSLoader v1.2.0, you can now access images locally from css. You can access images by using the following url: `/themes_custom/{your_theme_name}/{image_path}`
-
-# Submitting a theme to the theme store
-
-A pull request to this repository has a specific template to adhere to. Please make sure your theme adheres to [these requirements](https://github.com/EMERALD0874/CssLoader-ThemeDb/blob/main/.github/pull_request_template.md).
-
-1. Fork this repository
-2. Clone the forked repository to your PC using your favorite Git tool
-3. Create a preview image and place it in the `images/{AUTHOR}` folder
-   - Preferably upload an image in the .jpg format
-4. Create a JSON file named `{AUTHOR}-{THEME_NAME}.json` in the themes folder with the following content:
+1. Fork this repository.
+1. Clone the forked repository to your PC using your favorite Git tool.
+1. Create a preview image and place it in the `images/{AUTHOR}` folder.
+   - Preferably upload an image in the .jpg format.
+1. Create a JSON file named `{AUTHOR}-{THEME_NAME}.json` in the themes folder with the following content:
    - `repo_url`: Required, points to another GitHub repository with the theme
    - `repo_subpath`: Optional, defaults to '.', indicates the subpath to the folder containing the theme
    - `repo_commit`: Required, the commit in the Git repo you want to release
    - `preview_image_path`: Required. This image is displayed in the browse themes UI of the plugin and must be located in this repository
-5. (Optional) Test your theme submission using `py main.py` in the repository folder
-   - Python and Git CLI need to be installed
-   - If you are missing Python libraries, type `pip install -r requirements.txt`
-   - If the script throws no exception, you are ready to commit
-6. Make a commit with the image and JSON files
-7. (Optional) Repeat steps 3 through 6 for any additional themes you would like to add to your pull request
-8. Create a pull request from your fork to this repository
+1. If using local files
+1. (Optional) Test your theme submission using `py main.py` in the repository folder.
+   - Python and Git CLI need to be installed.
+   - If you are missing Python libraries, type `pip install -r requirements.txt`.
+   - If the script throws no exception, you are ready to commit.
+1. Make a commit with the image and JSON files.
+1. (Optional) Repeat steps 3 through 6 for any additional themes you would like to add to your pull request.
+1. Create a pull request from your fork to this repository.
 
 Here is an example `{AUTHOR}-{THEME_NAME}.json` file:
 
@@ -305,7 +307,7 @@ Here is an example `{AUTHOR}-{THEME_NAME}.json` file:
 }
 ```
 
-## File management
+### 🗃️ File Management
 
 Sometimes, you want to ignore specific files or remove specific files before they get analyzed by the CI of the theme db. This is for example needed if you want to include images in your theme. You can create a file called 'release.json' in the same folder as your 'theme.json' of your theme. Inside, the file should be structured as follows
 
@@ -316,24 +318,16 @@ Sometimes, you want to ignore specific files or remove specific files before the
 }
 ```
 
-Any paths in the include field will be included in the theme. Any paths in the ignore field will be ignored.
+Any paths in the "include" field will be included in the theme. Any paths in the "ignore" field will not be included in the download or file-checking process.
 
-# Support
+## 🙏 Support
 
-If you need any help creating or submitting a theme, please use [the Steam Deck Homebrew Discord server](https://discord.gg/ZU74G2NJzk). Please use the CSS-Loader Support thread in the #support-plugins channel.
+If you need any help creating or submitting a theme, please use [the Steam Deck Homebrew Discord server](https://discord.gg/ZU74G2NJzk). Please use the CSS-Loader support thread in the #support-plugins channel.
 
-## Upgrading a theme
+### 🔼 Upgrading an Old Theme
 
 If you created a theme and would like to upgrade it to the latest manifest version, please follow this guide. The current highest manifest version is 4.
 
-### Upgrading from version 3 to version 4
+#### ⬆️ Upgrading from Version 1
 
-No breaking changes have been made. Just change `manifest_version` from a `3` to a `4` to update a theme to manifest level 4
-
-### Upgrading from version 2 to version 3
-
-No breaking changes have been made. Just change `manifest_version` from a `2` to a `3` to update a theme to manifest level 3
-
-### Upgrading from version 1 to version 2, 3 or 4
-
-To upgrade a version 1 `themes.json`, all options of a patch need to be put in a `values` dictionary, and a `manifest_version` field should be added to the root of the .json with value `2` (or `3`/`4`). Please see [Making a theme compatible with the CSS loader](#making-a-theme-compatible-with-the-css-loader) for an example.
+To upgrade a version 1 `themes.json`, all options of a patch need to be put in a `values` dictionary, and a `manifest_version` field should be added to the root of the .json with value `4`. Please see [Designing a Theme](#-designing-a-theme) for an example.
