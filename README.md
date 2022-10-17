@@ -25,7 +25,7 @@ Development for the CSS Loader is intended to be as simple as possible. That bei
 
 ### 📂 Template
 
-There is [a template repository](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template) you can use for creating your first theme.
+There is [a template repository](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template) you can use for creating your first theme. It contains all the files you need to get started and is pre-configured to work with the CSS Loader.
 
 ### 🌐 CEF Debugger (Optional)
 
@@ -33,7 +33,7 @@ There is [a template repository](https://github.com/suchmememanyskill/Steam-Deck
 
 The Chromium Embedded Framework (CEF) debugger is very useful for creating themes, as it allows you to play around directly with the style of the Steam Deck UI.
 
-The debugger allows you to access tabs that are used for the UI. A few common ones are:
+The debugger allows you to access tabs that are used for the UI. The main ones are listed below.
 
 - `SP` - The main UI of the Steam Deck
 - `QuickAccess` - The Quick Access overlay
@@ -62,21 +62,22 @@ The debugger allows you to access tabs that are used for the UI. A few common on
 
 ### 🖌️ Simple Themes
 
-Themes are folders with CSS files and a single `theme.json` inside. The `theme.json` determines how everything will be displayed, and any dropdown options if the theme has them. The CSS loader loads themes from `/home/deck/homebrew/themes`.
+Themes are folders with CSS files and a single `theme.json` file inside. The `theme.json` determines how everything will be displayed and any options if the theme has them. The CSS Loader loads themes from `/home/deck/homebrew/themes`.
 
 ![SimpleTheme](images/Readme/simpletheme.png)
 
-[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Sample%20Simple%20Theme)
+[Here is the example shown above.](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Sample%20Simple%20Theme)
 
-For a simple theme, like the image above, `theme.json` should look something like this:
+For a simple theme, the `theme.json` should look something like this.
 
 ```json
 {
-  "name": "Clean Gameview",
-  "author": "SuchMeme",
+  "name": "Theme Title",
+  "author": "GitHubUsername",
   "target": "Library",
-  "manifest_version": 3,
-  "description": "this is an example description",
+  "manifest_version": 4,
+  "description": "This is an example description.",
+  "version": "v1.0",
   "inject": {
     "shared.css": ["SP"]
   }
@@ -85,9 +86,9 @@ For a simple theme, like the image above, `theme.json` should look something lik
 
 - The name element describes the theme name. This is also used as the folder name for the theme store.
 - The author element describes the theme author.
-- An optional field `"version": "v1.0"` can be added. If no version field is found, the version defaults to `v1.0`.
+- An optional version field can be added. If no version field is found, the version defaults to `v1.0`.
 - The manifest version tells the CSS Loader which version of `themes.json` you are using. The current version is `4`.
-- An optional field `"description": "This theme changes..."` can be added to show a text description in the theme store.
+- An optional description can be added to show a text description in the theme store.
 - The inject tab is a dictionary of relative CSS file paths as keys, and a list of tabs you want the CSS to be injected into.
 - The target field describes what part of the UI your theme themes. This is only useful for submitting a theme. The following options are available, but more can be added by creating an issue:
   - System-Wide
@@ -109,9 +110,9 @@ For a simple theme, like the image above, `theme.json` should look something lik
 
 ![ComplexTheme](images/Readme/complextheme.png)
 
-[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Sample%20Advanced%20Theme)
+[Here is the example shown above.](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Sample%20Advanced%20Theme)
 
-A complex theme is a theme with patches. Patches are displayed as dropdown menus that apply additional CSS depending on the selection. The `theme.json` for a complex theme should look something like this:
+A complex theme is a theme with patches. Patches are menus that apply additional CSS depending on the selection. The `theme.json` for a complex theme should look something like this.
 
 ```json
 {
@@ -189,17 +190,17 @@ Displays an arrow with the patch name. Has no functional use. For use with compo
 
 #### 📁 Local Files
 
-[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Sample%20Background%20Theme)
+You can access files locally from CSS if you use the correct URL. You can access files like fonts, images, and more by using the following URL.
 
-Since CSSLoader v1.2.0, you can now access files locally from CSS. You can access images by using the following URL: `/themes_custom/{your_theme_name}/{image_path}`
+`/themes_custom/{your_theme_name}/{image_path}`
+
+[Here is an example.](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Sample%20Background%20Theme)
 
 #### 📦 Adding Dependencies
 
-[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Sample%20Dependency%20Theme)
+Dependencies are useful if you want to bundle another theme or want to make small modifications to an existing theme. All dependencies get enabled alongside your theme.
 
-Since CSSLoader v1.2.0, a small dependency system has been added. This is useful if you want to bundle another theme or want to make small modifications to an existing theme. All dependencies get enabled alongside your theme.
-
-In the themes.json file, specify a field called `"dependencies"`. This is a dictionary in which the keys are the name of the theme you want to be dependencies, with their values being another dictionary. This dictionary's keys are the name of any patch this theme has, and the value is the name of a value in the patch. If you don't want to modify any patch value, write `{}` as the value.
+In the `themes.json` file, specify a field called `"dependencies"`. This is a dictionary in which the keys are the name of the theme you want to be dependencies, with their values being another dictionary. This dictionary's keys are the name of any patch this theme has, and the value is the name of a value in the patch. If you don't want to modify any patch value, write `{}` as the value.
 
 ```json
 "dependencies": {
@@ -212,11 +213,11 @@ In the themes.json file, specify a field called `"dependencies"`. This is a dict
 
 > If a theme has a dependencies field like the one above, it will enable both Switch Like Home and Clean Gameview. Switch Like Home's 'No Friends' patch gets forced to 'Yes'.
 
+[Here is an example.](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Sample%20Dependency%20Theme)
+
 #### 🗃️ Components
 
-Components are a way to attach extra parts to a selectable patch option.
-
-Components are part of a patch. Inside a patch, you can make a `"components"` field (its value is a list), and put the components inside.
+Components are a way to attach extra parts to a selectable patch option. Inside a patch, you can make a `"components"` field (its value is a list), and put the components inside.
 
 ##### 🎨 Color Picker
 
@@ -239,12 +240,12 @@ The color picker component injects a CSS variable with a user-specified color.
 ]
 ```
 
-- `name` refers to the of the component. This is shown to the user
-- `type` refers to the type of component. For the color picker it's `color-picker`
+- `name` refers to the name of the component shown to the user
+- `type` refers to the type of component
 - `on` refers to what patch value the component should be displayed on
-- `default` refers to what default color the color picker should start out with. Only hex is supported, in 3,4,6 and 8 character variants
-- `css_variable` refers to the name of the css variable that will be injected
-- `tabs` refers to what tabs the css variable will be injected into
+- `default` refers to what default hex color the color picker should default to
+- `css_variable` refers to the name of the CSS variable that will be injected
+- `tabs` refers to what tabs the CSS variable will be injected into
 
 ##### 📷 Image Picker
 
@@ -252,7 +253,7 @@ The color picker component injects a CSS variable with a user-specified color.
 
 [Example](https://github.com/suchmememanyskill/Steam-Deck-Themes/tree/main/static-background)
 
-The image picker component injects a user supplied file, using a file picker, as `url(path/to/file)` as a css variable. Only images from `~/homebrew/themes` can be selected
+The image picker component injects a user-supplied file using a file picker into a CSS variable as `url(path/to/file)`. Only files from `~/homebrew/themes` can be selected.
 
 ```json
 "components": [
@@ -267,10 +268,10 @@ The image picker component injects a user supplied file, using a file picker, as
 ]
 ```
 
-- `name` refers to the name of the component. This is shown to the user
-- `type` refers to the type of component. For the color picker, it's `image-picker`
+- `name` refers to the name of the component shown to the user
+- `type` refers to the type of component
 - `on` refers to what patch value the component should be displayed on
-- `default` refers to what default image path the image picker should start out with. The supplied relative path starts in `~/homebrew/themes`
+- `default` refers to what default file path the image picker should default to (relative to `~/homebrew/themes`)
 - `css_variable` refers to the name of the CSS variable that will be injected
 - `tabs` refers to what tabs the CSS variable will be injected into
 
@@ -326,8 +327,16 @@ If you need any help creating or submitting a theme, please use [the Steam Deck 
 
 ### 🔼 Upgrading an Old Theme
 
-If you created a theme and would like to upgrade it to the latest manifest version, please follow this guide. The current highest manifest version is 4.
+If you created a theme and would like to upgrade it to the latest manifest version, please follow this guide. The current highest manifest version is `4`.
 
 #### ⬆️ Upgrading from Version 1
 
-To upgrade a version 1 `themes.json`, all options of a patch need to be put in a `values` dictionary, and a `manifest_version` field should be added to the root of the .json with value `4`. Please see [Designing a Theme](#-designing-a-theme) for an example.
+To upgrade a version 1 `theme.json`, all options of a patch need to be put in a `values` dictionary, and a `manifest_version` field should be added to the root of the .json with value `4`. Please see [🖌️ Simple Themes](#-simple-themes) for an example.
+
+#### ⬆️ Upgrading from Newer Versions
+
+No breaking changes have been made. You can simply change the `manifest_version` field in the root of `theme.json` to the value `4`.
+
+## ❤️ Special Thanks
+
+The CSS Loader logo is a modified version of the [paint-roller icon](https://fontawesome.com/icons/paint-roller?s=solid&f=classic) by Font Awesome which is licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).
