@@ -279,6 +279,8 @@ The image picker component injects a user-supplied file using a file picker into
 
 A pull request to this repository has a specific template to adhere to. Please make sure your theme adheres to [these requirements](https://github.com/suchmememanyskill/CssLoader-ThemeDb/blob/main/.github/pull_request_template.md).
 
+### 💻 Using GitHub
+
 1. Fork this repository.
 1. Clone the forked repository to your PC using your favorite Git tool.
 1. Create a preview image and place it in the `images/{AUTHOR}` folder.
@@ -307,6 +309,18 @@ Here is an example `{AUTHOR}-{THEME_NAME}.json` file:
   "preview_image_path": "images/SuchMeme/Clean Gameview.jpg"
 }
 ```
+
+### 💬 Using Discord (Experimental)
+1. [Join SuchMemeManySkill's development Discord server](https://discord.gg/aH9rsuP).
+2. Go to the #css-submission-accept channel.
+3. Read through and accept the terms. After accepting the terms, a new channel called #css-submissions-bot will appear. Go into this channel.
+4. Type `/css submit`, and fill in all applicable fields.
+    - The `theme` field accepts a zip file. This zip file should contain the theme at the root level (theme.json is visible when you open the zip). Also, a `thumbnail.jpg` image file should exist on the root level of the zip, which is used as the preview of the theme.
+    - The bot verifies your theme before submission.
+    - Updates should be supported, by uploading the same theme with the same discord account you uploaded a theme previously with using the bot.
+    - If any issues come up, please mention `@Such Meme, Many Skill#2921` in the #css-submissions-bot channel.
+
+This will make a GitHub pull request so it can be reviewed by the CSS Loader team the same way as other submissions.
 
 ### 🗃️ File Management
 
