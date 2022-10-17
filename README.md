@@ -223,7 +223,7 @@ Components are a way to attach extra parts to a selectable patch option. Inside 
 
 ![Color picker](images/Readme/color-picker.jpg)
 
-[Example](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Sample%20Color%20Picker%20Theme)
+[Here is an example.](https://github.com/suchmememanyskill/Steam-Deck-Theme-Template/tree/main/Sample%20Color%20Picker%20Theme)
 
 The color picker component injects a CSS variable with a user-specified color.
 
@@ -251,7 +251,7 @@ The color picker component injects a CSS variable with a user-specified color.
 
 ![imagepicker](images/Readme/image-picker.jpg)
 
-[Example](https://github.com/suchmememanyskill/Steam-Deck-Themes/tree/main/static-background)
+[Here is an example.](https://github.com/suchmememanyskill/Steam-Deck-Themes/tree/main/static-background)
 
 The image picker component injects a user-supplied file using a file picker into a CSS variable as `url(path/to/file)`. Only files from `~/homebrew/themes` can be selected.
 
