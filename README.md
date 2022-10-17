@@ -4,9 +4,9 @@
   CSS Loader - Theme Database
 </h1>
 <p align="center">
-  <a href="https://github.com/suchmememanyskill/SDH-CssLoader/stargazers"><img src="https://img.shields.io/github/stars/suchmememanyskill/SDH-CssLoader" /></a>
-  <a href="https://github.com/suchmememanyskill/SDH-CssLoader/commits/main"><img src="https://img.shields.io/github/last-commit/suchmememanyskill/SDH-CssLoader.svg" /></a>
-  <a href="https://github.com/suchmememanyskill/SDH-CssLoader/blob/main/LICENSE"><img src="https://img.shields.io/github/license/suchmememanyskill/SDH-CssLoader" /></a>
+  <a href="https://github.com/suchmememanyskill/CssLoader-ThemeDb/stargazers"><img src="https://img.shields.io/github/stars/suchmememanyskill/CssLoader-ThemeDb" /></a>
+  <a href="https://github.com/suchmememanyskill/CssLoader-ThemeDb/commits/main"><img src="https://img.shields.io/github/last-commit/suchmememanyskill/CssLoader-ThemeDb.svg" /></a>
+  <a href="https://github.com/suchmememanyskill/CssLoader-ThemeDb/blob/main/LICENSE"><img src="https://img.shields.io/github/license/suchmememanyskill/CssLoader-ThemeDb" /></a>
   <a href="https://discord.gg/ZU74G2NJzk"><img src="https://img.shields.io/discord/960281551428522045?color=%235865F2&label=discord" /></a>
   <br>
   <br>
