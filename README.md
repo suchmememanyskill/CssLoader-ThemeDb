@@ -190,7 +190,7 @@ Displays an arrow with the patch name. Has no functional use. For use with compo
 
 #### 📁 Local Files
 
-You can access files locally from CSS if you use the correct URL. You can access files like fonts, images, and more by using the following URL.
+You can access files locally from CSS if you use the correct URL. You can access files like fonts, images, and more by using the following URL. Keep in mind that if you plan to upload your theme to the theme store, you need to configure your [🗃️ File Management](#-file-management) correctly.
 
 `/themes_custom/{your_theme_name}/{image_path}`
 
