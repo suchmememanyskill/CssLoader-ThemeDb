@@ -1,3 +1,9 @@
+# THIS REPOSTIORY IS DEPRICATED
+The new CSS Loader ThemeDB is located at https://deckthemes.com/. Please make any future submissions there
+
+-----
+
+
 <h1 align="center">
   <img src="./images/Readme/logo.png#gh-light-mode-only" alt="CSS Loader logo, based on paint-roller from Font Awesome" width="200"><img src="./images/Readme/logo_white.png#gh-dark-mode-only" alt="CSS Loader logo, based on paint-roller from Font Awesome" width="200">
   <br>
