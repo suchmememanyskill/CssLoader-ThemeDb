@@ -1,4 +1,4 @@
-# THIS REPOSTIORY IS DEPRICATED
+# THIS REPOSTIORY IS DEPRECATED
 The new CSS Loader ThemeDB is located at https://deckthemes.com/. Please make any future submissions there
 
 -----
